@@ -106,6 +106,22 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NTierMvcCustomerSystem.BusinessLogic\NTierMvcCustomerSystem.BusinessLogic.csproj">
+      <Project>{ca16f94a-1cc9-4593-b468-b5c7e3657e45}</Project>
+      <Name>NTierMvcCustomerSystem.BusinessLogic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NTierMvcCustomerSystem.Common\NTierMvcCustomerSystem.Common.csproj">
+      <Project>{9add8ed7-a987-40e4-a476-0a6f9a75fd49}</Project>
+      <Name>NTierMvcCustomerSystem.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NTierMvcCustomerSystem.DataAccess\NTierMvcCustomerSystem.DataAccess.csproj">
+      <Project>{f9184b2f-ec1d-4c7c-8831-c46b8a105906}</Project>
+      <Name>NTierMvcCustomerSystem.DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NTierMvcCustomerSystem.Model\NTierMvcCustomerSystem.Model.csproj">
+      <Project>{11204e4d-1e16-4d4c-b0b5-585d9bb85bcd}</Project>
+      <Name>NTierMvcCustomerSystem.Model</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NTierMvcCustomerSystem\NTierMvcCustomerSystem.csproj">
       <Project>{996D6A43-8AC0-4A32-8E24-87CEF830DFB5}</Project>
       <Name>NTierMvcCustomerSystem</Name>
