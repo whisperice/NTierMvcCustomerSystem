@@ -7,11 +7,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NTierMvcCustomerSystem;
 using NTierMvcCustomerSystem.Controllers;
 
-namespace NTierMvcCustomerSystem.Tests.Controllers
+namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.Controllers
 {
     [TestClass]
     public class HomeControllerTest
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         [TestMethod]
         public void Index()
         {
@@ -23,6 +25,7 @@ namespace NTierMvcCustomerSystem.Tests.Controllers
 
             // Assert
             Assert.IsNotNull(result);
+
         }
 
         [TestMethod]

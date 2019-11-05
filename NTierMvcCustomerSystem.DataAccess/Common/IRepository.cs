@@ -6,13 +6,16 @@ using System.Threading.Tasks;
 
 namespace NTierMvcCustomerSystem.DataAccess.Common
 {
-    // This interface contains common methods implemented by all repository classes.
+    /// <summary>
+    /// This interface contains common methods implemented by all repository classes.
+    /// </summary>
+    /// <typeparam name="TEntity">The class of entity</typeparam>
     public interface IRepository<TEntity> where TEntity:class
     {
         bool Insert(TEntity entity);
         bool Update(TEntity entity);
         bool DeleteById(int id);
         TEntity SelectById(int id);
-        List<TEntity> SelectAll();
+        IList<TEntity> SelectAll();
     }
 }

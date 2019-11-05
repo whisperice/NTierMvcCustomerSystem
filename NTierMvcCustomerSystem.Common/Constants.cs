@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace NTierMvcCustomerSystem.Common
 {
-    public class Class1
+    public static class Constants
     {
+        public const string DateOfBirthTimeFormat = "dd/MM/yyyy";
     }
 }
