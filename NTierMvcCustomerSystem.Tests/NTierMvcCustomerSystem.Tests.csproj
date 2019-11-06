@@ -103,7 +103,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\TestConstants.cs" />
     <Compile Include="NTierMvcCustomerSystem.Common\ConfigurationHandlerTest.cs" />
+    <Compile Include="NTierMvcCustomerSystem.DataAccess\IdSeqGeneratorTest.cs" />
+    <Compile Include="NTierMvcCustomerSystem.DataAccess\CustomersRepositoryTest.cs" />
     <Compile Include="NTierMvcCustomerSystem.DataAccess\JsonFileHandlerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NTierMvcCustomerSystem\Controllers\HomeControllerTest.cs" />

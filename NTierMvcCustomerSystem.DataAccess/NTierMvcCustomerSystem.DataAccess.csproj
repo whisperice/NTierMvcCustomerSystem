@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\DataAccessException.cs" />
+    <Compile Include="Common\IdSeqGenerator.cs" />
     <Compile Include="Common\JsonFileHandler.cs" />
     <Compile Include="CustomersRepository.cs" />
     <Compile Include="Common\IRepository.cs" />

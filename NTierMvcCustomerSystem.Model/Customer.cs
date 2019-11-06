@@ -1,4 +1,5 @@
 ﻿using System;
+using NTierMvcCustomerSystem.Common;
 
 namespace NTierMvcCustomerSystem.Model
 {
@@ -10,5 +11,10 @@ namespace NTierMvcCustomerSystem.Model
         public string LastName { get; set; }
         public string PhoneNumber { get; set; }
         public DateTime DateOfBirth { get; set; }
+
+        public override string ToString()
+        {
+            return $"Id: {Id}, UserName: {UserName}, FirstName: {FirstName}, LastName: {LastName}, PhoneNumber: {PhoneNumber}, DateOfBirth: {DateOfBirth.ToString(Constants.DateOfBirthTimeFormat)}";
+        }
     }
 }

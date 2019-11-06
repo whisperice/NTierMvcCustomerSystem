@@ -3,13 +3,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
 using NTierMvcCustomerSystem.Common;
 using NTierMvcCustomerSystem.DataAccess.Common;
+using NTierMvcCustomerSystem.Tests.Common;
 
 namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
 {
     [TestClass]
     public class JsonFileHandlerTest
     {
-        private const string CustomerFileName= "CustomersTest.json";
+        private const string CustomerFileName= TestConstants.CustomerFileName;
 
         [TestMethod]
         public void WriteJsonFile_GivenExistPathAndName_FileWriteSuccessfully()
@@ -45,7 +46,7 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
                                           ]
                                         }");
 
-            var path = ConfigurationHandler.GetDataSourcePath();
+            var path = TestConstants.DataSourcePath;
             var fileName = CustomerFileName;
 
             JsonFileHandler.WriteJsonFile(path, fileName, jObject);
@@ -63,7 +64,7 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
 			                                            'LastName': 'BCD',
 			                                            'PhoneNumber': '0412123123',
 			                                            'DateOfBirth': '01/01/1990',
-			                                            'CallNoteFilePathAndName': 'E:\\文档\\whisper.json'
+			                                            'CallNoteName': 'whisper.json'
 		                                            },
 		                                            {
 			                                            'Id': 2,
@@ -72,15 +73,14 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
 			                                            'LastName': 'BBBCD',
 			                                            'PhoneNumber': '0444321321',
 			                                            'DateOfBirth': '01/01/2000',
-			                                            'CallNoteFilePathAndName': 'E:\\文档\\wing.json'
+			                                            'CallNoteName': 'wing.json'
 		                                            }
 	                                            ]
                                             }");
 
-            var dataSourcePath = ConfigurationHandler.GetDataSourcePath();
+            var dataSourcePath = TestConstants.DataSourcePath;
             var jObjectRead = JsonFileHandler.ReadJsonFile(dataSourcePath, CustomerFileName);
 
-            Console.WriteLine(jObject["Customers"][0].GetType());
             Assert.IsTrue(JObject.DeepEquals(jObject, jObjectRead));
         }
     }

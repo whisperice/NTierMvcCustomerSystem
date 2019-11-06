@@ -1,18 +1,19 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NTierMvcCustomerSystem.Common;
+using NTierMvcCustomerSystem.Tests.Common;
 
 namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.Common
 {
     [TestClass]
     public class ConfigurationHandlerTest
     {
-        private const string ExpectedPath = @"E:\文档\tuts\C#\NTierMvcCustomerSystem\DataSource";
+        private const string ExpectedPath = TestConstants.DataSourcePath;
 
         [TestMethod]
         public void GetAppSettingsValueByKey_GivenExistKey_GetCorrectValue()
         {
-            var key = "DataSourcePath";
+            var key = Constants.DataSourcePathKey;
             var expectedValue = ExpectedPath;
 
             var value = ConfigurationHandler.GetAppSettingsValueByKey(key);

@@ -12,16 +12,14 @@ namespace NTierMvcCustomerSystem.Common
     /// </summary>
     public static class ConfigurationHandler
     {
-        private const string DataSourcePath = "DataSourcePath";
-
         private static string _dataSourcePath;
-        private static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static string GetAppSettingsValueByKey(string key)
         {
-            if (Logger.IsDebugEnabled)
+            if (_logger.IsDebugEnabled)
             {
-                Logger.Debug("[ConfigurationHandler::GetAppSettingsValueByKey] Getting key: {0}", key);
+                _logger.Debug("[ConfigurationHandler::GetAppSettingsValueByKey] Getting key: {0}", key);
             }
 
             try
@@ -34,15 +32,15 @@ namespace NTierMvcCustomerSystem.Common
                     throw new ConfigurationErrorsException(
                         $"Failed to find the AppSettings Key named '{key}' in App/Web.config.");
 
-                if (Logger.IsDebugEnabled)
+                if (_logger.IsDebugEnabled)
                 {
-                    Logger.Debug("[ConfigurationHandler::GetAppSettingsValueByKey] Key: {0}, Value: {1}", key, appSettingsValue);
+                    _logger.Debug("[ConfigurationHandler::GetAppSettingsValueByKey] Key: {0}, Value: {1}", key, appSettingsValue);
                 }
                 return appSettingsValue;
             }
             catch (Exception e)
             {
-                Logger.Error(e, "[ConfigurationHandler::GetAppSettingsValueByKey] Error occured.");
+                _logger.Error(e, "[ConfigurationHandler::GetAppSettingsValueByKey] Error occured.");
                 throw new CommonException("ConfigurationHandler::GetAppSettingsValueByKey: Error occured.", e);
             }
         }
@@ -56,7 +54,7 @@ namespace NTierMvcCustomerSystem.Common
                     return _dataSourcePath;
                 }
 
-                _dataSourcePath = GetAppSettingsValueByKey(DataSourcePath);
+                _dataSourcePath = GetAppSettingsValueByKey(Constants.DataSourcePathKey);
                 return _dataSourcePath;
             }
             catch (Exception e)

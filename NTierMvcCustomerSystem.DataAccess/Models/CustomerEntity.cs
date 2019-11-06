@@ -9,6 +9,11 @@ namespace NTierMvcCustomerSystem.DataAccess.Models
 {
     public class CustomerEntity : Customer
     {
-        public string CallNoteFilePathAndName { get; set; }
+        public string CallNoteName { get; set; }
+
+        public override string ToString()
+        {
+            return $"{base.ToString()}, CallNoteName: {CallNoteName}";
+        }
     }
 }

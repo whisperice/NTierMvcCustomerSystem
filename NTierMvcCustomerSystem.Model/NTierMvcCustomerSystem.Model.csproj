@@ -44,5 +44,11 @@
     <Compile Include="Customer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NTierMvcCustomerSystem.Common\NTierMvcCustomerSystem.Common.csproj">
+      <Project>{9add8ed7-a987-40e4-a476-0a6f9a75fd49}</Project>
+      <Name>NTierMvcCustomerSystem.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
