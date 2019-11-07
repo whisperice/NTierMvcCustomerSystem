@@ -8,7 +8,7 @@ using NTierMvcCustomerSystem.Tests.Common;
 namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
 {
     [TestClass]
-    public class JsonFileHandlerTest
+    public class JsonFileHelperTest
     {
         private const string CustomerFileName= TestConstants.CustomerFileName;
 
@@ -49,7 +49,7 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
             var path = TestConstants.DataSourcePath;
             var fileName = CustomerFileName;
 
-            JsonFileHandler.WriteJsonFile(path, fileName, jObject);
+            JsonFileHelper.WriteJsonFile(path, fileName, jObject);
         }
 
         [TestMethod]
@@ -79,7 +79,7 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
                                             }");
 
             var dataSourcePath = TestConstants.DataSourcePath;
-            var jObjectRead = JsonFileHandler.ReadJsonFile(dataSourcePath, CustomerFileName);
+            var jObjectRead = JsonFileHelper.ReadJsonFile(dataSourcePath, CustomerFileName);
 
             Assert.IsTrue(JObject.DeepEquals(jObject, jObjectRead));
         }

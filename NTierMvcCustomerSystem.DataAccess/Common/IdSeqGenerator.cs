@@ -24,11 +24,11 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
 
             try
             {
-                var jObj = JsonFileHandler.ReadJsonFile(_idSeqFilePath, _idSeqFileName);
+                var jObj = JsonFileHelper.ReadJsonFile(_idSeqFilePath, _idSeqFileName);
                 var idSeq = (int)jObj["IdSeq"];
                 idSeq++;
                 jObj["IdSeq"] = idSeq;
-                JsonFileHandler.WriteJsonFile(_idSeqFilePath, _idSeqFileName, jObj);
+                JsonFileHelper.WriteJsonFile(_idSeqFilePath, _idSeqFileName, jObj);
 
                 if (_logger.IsDebugEnabled)
                 {

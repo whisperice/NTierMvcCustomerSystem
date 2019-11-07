@@ -12,9 +12,9 @@ using NTierMvcCustomerSystem.Common;
 namespace NTierMvcCustomerSystem.DataAccess.Common
 {
     /// <summary>
-    /// The Handler Class to manipulate a json file which act as the data source of the customers.
+    /// The Helper Class to manipulate a json file which act as the data source of the customers.
     /// </summary>
-    public static class JsonFileHandler
+    public static class JsonFileHelper
     {
         private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -42,7 +42,7 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
                 {
                     using (JsonTextReader reader = new JsonTextReader(file))
                     {
-                        JObject jObject = (JObject) JToken.ReadFrom(reader);
+                        JObject jObject = (JObject)JToken.ReadFrom(reader);
 
                         if (_logger.IsDebugEnabled)
                         {
@@ -90,6 +90,9 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
                 {
                     throw new ArgumentNullException(nameof(fileName), "The file path can't be Null or Empty.");
                 }
+
+                // Create directory if it is not exist
+                Directory.CreateDirectory(filePath);
 
                 var fullFileName = filePath + Path.DirectorySeparatorChar + fileName;
                 using (StreamWriter file = File.CreateText(fullFileName))

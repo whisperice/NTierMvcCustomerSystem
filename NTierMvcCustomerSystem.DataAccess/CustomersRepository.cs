@@ -23,12 +23,20 @@ namespace NTierMvcCustomerSystem.DataAccess
 
         }
 
+        // Normally use the default constructor, only use this one if need to write to a different path.
         public CustomersRepository(string customersFilePath, string customersFileName)
         {
             _customersFilePath = customersFilePath;
             _customersFileName = customersFileName;
         }
 
+        /// <summary>
+        /// Insert a CustomerEntity to Json File
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns>True, if the entity is successfully inserted;
+        ///         False, if the entity has the identical user name with other customer
+        /// </returns>
         public bool Insert(CustomerEntity entity)
         {
             if (_logger.IsDebugEnabled)
@@ -51,7 +59,7 @@ namespace NTierMvcCustomerSystem.DataAccess
                         nameof(userName), "[CustomersRepository::Insert] UserName can not be null or empty.");
                 }
 
-                var jObjectFromFile = JsonFileHandler.ReadJsonFile(_customersFilePath, _customersFileName);
+                var jObjectFromFile = JsonFileHelper.ReadJsonFile(_customersFilePath, _customersFileName);
 
                 var customerEntityJObject = jObjectFromFile["Customers"].FirstOrDefault(c => userName.Equals((string)c["UserName"]));
 
@@ -64,12 +72,11 @@ namespace NTierMvcCustomerSystem.DataAccess
 
                 var jObjectFromEntity = CustomerEntityToJToken(entity);
                 jObjectFromFile.Merge(jObjectFromEntity, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
-                JsonFileHandler.WriteJsonFile(_customersFilePath, _customersFileName, jObjectFromFile);
+                JsonFileHelper.WriteJsonFile(_customersFilePath, _customersFileName, jObjectFromFile);
 
                 if (_logger.IsDebugEnabled)
                 {
-                    _logger.Debug("[CustomersRepository::Insert] Insert customerEntity Successfully. InsertedEntity: {0}, IdSeq: {1}",
-                                            entity, jObjectFromEntity["IdSeq"]);
+                    _logger.Debug("[CustomersRepository::Insert] Insert customerEntity Successfully. InsertedEntity: {0}", entity);
                 }
                 return true;
             }
@@ -80,14 +87,104 @@ namespace NTierMvcCustomerSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// Update a CustomerEntity to Json File
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns>True, if the entity is successfully updated;
+        ///         False, if there is no customer has the identical user name
+        /// </returns>
         public bool Update(CustomerEntity entity)
         {
-            return false;
+            if (_logger.IsDebugEnabled)
+            {
+                _logger.Debug("[CustomersRepository::Update] Starting update costomerEntity.");
+            }
+
+            try
+            {
+                if (entity == null)
+                {
+                    throw new ArgumentNullException(
+                        nameof(entity), "[CustomersRepository::Update] CustomerEntity can not be null.");
+                }
+
+                var userName = entity.UserName;
+                if (string.IsNullOrEmpty(userName))
+                {
+                    throw new ArgumentNullException(
+                        nameof(userName), "[CustomersRepository::Update] UserName can not be null or empty.");
+                }
+
+                var jObjectFromFile = JsonFileHelper.ReadJsonFile(_customersFilePath, _customersFileName);
+
+                var customerEntityJObject = jObjectFromFile["Customers"].FirstOrDefault(
+                                            c => userName.Equals((string)c["UserName"]) && entity.Id == (int)c["Id"]);
+
+                // Can't update if id and userName are not matched
+                if (customerEntityJObject == null)
+                {
+                    _logger.Debug("[CustomersRepository::Update] Can't update if id and userName are not matched.");
+                    return false;
+                }
+
+                UpdateJTokenByEntity(customerEntityJObject, entity);
+                JsonFileHelper.WriteJsonFile(_customersFilePath, _customersFileName, jObjectFromFile);
+
+                if (_logger.IsDebugEnabled)
+                {
+                    _logger.Debug("[CustomersRepository::Update] Update customerEntity Successfully. UpdatedEntity: {0}", entity);
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "[CustomersRepository::Update] Update customerEntity failed. Entity: {0}", entity);
+                throw new DataAccessException("[CustomersRepository::Update] Update customerEntity failed.", e);
+            }
         }
 
         public bool DeleteById(int id)
         {
-            return false;
+            if (_logger.IsDebugEnabled)
+            {
+                _logger.Debug("[CustomersRepository::DeleteById] Starting delete costomerEntity.");
+            }
+
+            try
+            {
+                if (id < Constants.MinValidCustomerId)
+                {
+                    throw new ArgumentException(
+                         "[CustomersRepository::DeleteById] CustomerEntity can not be null.", nameof(id));
+                }
+
+                var jObject = JsonFileHelper.ReadJsonFile(_customersFilePath, _customersFileName);
+                var jArray = (JArray)jObject["Customers"];
+                var customerEntityJObject = jArray.FirstOrDefault(c => (int)c["Id"] == id);
+
+                // Can't delete when there is no such id
+                if (customerEntityJObject == null)
+                {
+                    _logger.Debug("[CustomersRepository::DeleteById] Can't delete when there is no such id.");
+                    return false;
+                }
+
+                jArray.Remove(customerEntityJObject);
+                JsonFileHelper.WriteJsonFile(_customersFilePath, _customersFileName, jObject);
+
+                if (_logger.IsDebugEnabled)
+                {
+                    _logger.Debug("[CustomersRepository::DeleteById] Delete customerEntity Successfully. DeletedEntity: {0}", 
+                        JTokenToCustomerEntity(customerEntityJObject));
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "[CustomersRepository::DeleteById] Delete customerEntity failed. Id: {0}", id);
+                throw new DataAccessException("[CustomersRepository::DeleteById] Update customerEntity failed.", e);
+            }
         }
 
         public CustomerEntity SelectById(int id)
@@ -99,7 +196,13 @@ namespace NTierMvcCustomerSystem.DataAccess
 
             try
             {
-                var jObject = JsonFileHandler.ReadJsonFile(_customersFilePath, _customersFileName);
+                if (id < Constants.MinValidCustomerId)
+                {
+                    throw new ArgumentException(
+                        "[CustomersRepository::DeleteById] CustomerEntity can not be null.", nameof(id));
+                }
+
+                var jObject = JsonFileHelper.ReadJsonFile(_customersFilePath, _customersFileName);
 
                 var customerEntityJObject = jObject["Customers"].FirstOrDefault(c => (int)c["Id"] == id);
                 var customerEntity = JTokenToCustomerEntity(customerEntityJObject);
@@ -132,7 +235,7 @@ namespace NTierMvcCustomerSystem.DataAccess
                         nameof(userName), "[CustomersRepository::SelectByUserName] UserName can not be null or empty.");
                 }
 
-                var jObject = JsonFileHandler.ReadJsonFile(_customersFilePath, _customersFileName);
+                var jObject = JsonFileHelper.ReadJsonFile(_customersFilePath, _customersFileName);
 
                 var customerEntityJObject = jObject["Customers"].FirstOrDefault(c => userName.Equals((string)c["UserName"]));
                 var customerEntity = JTokenToCustomerEntity(customerEntityJObject);
@@ -159,7 +262,7 @@ namespace NTierMvcCustomerSystem.DataAccess
 
             try
             {
-                var jObject = JsonFileHandler.ReadJsonFile(_customersFilePath, _customersFileName);
+                var jObject = JsonFileHelper.ReadJsonFile(_customersFilePath, _customersFileName);
 
                 var customerEntities = jObject["Customers"].Select(JTokenToCustomerEntity).ToList();
 
@@ -191,7 +294,7 @@ namespace NTierMvcCustomerSystem.DataAccess
                         nameof(name), "[CustomersRepository::SelectByFirstOrLastName] Name can not be null or empty.");
                 }
 
-                var jObject = JsonFileHandler.ReadJsonFile(_customersFilePath, _customersFileName);
+                var jObject = JsonFileHelper.ReadJsonFile(_customersFilePath, _customersFileName);
 
                 var customerEntities = jObject["Customers"]
                                         .Where(c => ((string)c["FirstName"]).Contains(name) || ((string)c["LastName"]).Contains(name))
@@ -257,6 +360,17 @@ namespace NTierMvcCustomerSystem.DataAccess
             };
             jArray.Add(o);
             return jObject;
+        }
+
+        private static void UpdateJTokenByEntity(JToken jObject, CustomerEntity customerEntity)
+        {
+            jObject["Id"] = customerEntity.Id;
+            jObject["UserName"] = customerEntity.UserName;
+            jObject["FirstName"] = customerEntity.FirstName;
+            jObject["LastName"] = customerEntity.LastName;
+            jObject["PhoneNumber"] = customerEntity.PhoneNumber;
+            jObject["DateOfBirth"] = customerEntity.DateOfBirth.ToString(Constants.DateOfBirthTimeFormat);
+            jObject["CallNoteName"] = customerEntity.CallNoteName;
         }
     }
 }

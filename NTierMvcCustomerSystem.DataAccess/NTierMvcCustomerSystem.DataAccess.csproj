@@ -52,9 +52,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\CallNoteFileHelper.cs" />
     <Compile Include="Common\DataAccessException.cs" />
     <Compile Include="Common\IdSeqGenerator.cs" />
-    <Compile Include="Common\JsonFileHandler.cs" />
+    <Compile Include="Common\JsonFileHelper.cs" />
     <Compile Include="CustomersRepository.cs" />
     <Compile Include="Common\IRepository.cs" />
     <Compile Include="Models\CustomerEntity.cs" />

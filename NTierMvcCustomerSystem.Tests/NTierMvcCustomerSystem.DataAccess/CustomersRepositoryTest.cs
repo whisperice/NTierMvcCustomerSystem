@@ -47,5 +47,33 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
             
         }
 
+
+        [TestMethod]
+        public void Update_GivenEntityWithMatchedUserNameAndId_UpdateSuccessfully()
+        {
+            var customersRepository = new CustomersRepository(TestConstants.DataSourcePath, CustomerFileName);
+            var entity = new CustomerEntity
+            {
+                Id = 3,
+                UserName = "water",
+                FirstName = "ZZZ",
+                LastName = "QQQ",
+                PhoneNumber = "0499999999",
+                DateOfBirth = new DateTime(1991, 10, 10),
+                CallNoteName = "water.json"
+            };
+
+            Assert.IsTrue(customersRepository.Update(entity));
+
+        }
+
+        [TestMethod]
+        public void DeleteById_GivenEntityWithExistId_DeleteSuccessfully()
+        {
+            var customersRepository = new CustomersRepository(TestConstants.DataSourcePath, CustomerFileName);
+
+            Assert.IsTrue(customersRepository.DeleteById(3));
+
+        }
     }
 }
