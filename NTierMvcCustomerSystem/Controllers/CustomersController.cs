@@ -13,22 +13,43 @@ namespace NTierMvcCustomerSystem.Controllers
 
         private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
-        // GET: Customers
         public ActionResult Index()
         {
             return RedirectToAction("ListAll");
         }
 
+        // GET: Customers/Create
         public ActionResult Create()
         {
             return View();
         }
 
+        // POST: Customers/Create
+        [HttpPost]
+        public ActionResult Create(Customer customer)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            return View();
+        }
+
+        // GET: Customers/Edit
         public ActionResult Edit()
         {
             return View();
         }
 
+        // POST: Customers/Edit
+        [HttpPost]
+        public ActionResult Edit(Customer customer)
+        {
+            return View();
+        }
+
+        // GET: Customers/Delete/id
         public ActionResult Delete(int id)
         {
             var customer = GetAllCustomers().SingleOrDefault(c => c.Id == id);
@@ -41,11 +62,20 @@ namespace NTierMvcCustomerSystem.Controllers
             return View(customer);
         }
 
+        // GET: Customers/Search
         public ActionResult Search()
         {
             return View();
         }
 
+        // POST: Customers/Search
+        [HttpPost]
+        public ActionResult Search(Customer customer)
+        {
+            return View();
+        }
+
+        // GET: Customers/ListAll
         public ActionResult ListAll()
         {
             _logger.Info("[CustomersController::ListAll] Request for All Customers.");

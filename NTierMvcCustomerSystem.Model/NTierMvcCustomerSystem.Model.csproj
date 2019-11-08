@@ -46,6 +46,7 @@
     <Compile Include="ChildCallNote.cs" />
     <Compile Include="Customer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Validators\AgeLimit.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NTierMvcCustomerSystem.Common\NTierMvcCustomerSystem.Common.csproj">

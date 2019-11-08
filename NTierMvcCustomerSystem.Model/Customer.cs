@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using NTierMvcCustomerSystem.Common;
+using NTierMvcCustomerSystem.Model.Validators;
 
 namespace NTierMvcCustomerSystem.Model
 {
@@ -10,27 +11,28 @@ namespace NTierMvcCustomerSystem.Model
 
         [Display(Name = "User Name")]
         [Required(ErrorMessage = "User Name is required")]
-        [RegularExpression(@"^[a-zA-Z0-9''-'\s]{5,20}$", ErrorMessage = "Must be 5-20 characters")]
+        [RegularExpression(@"^[a-zA-Z0-9]{5,20}$", ErrorMessage = "Must be 5-20 characters")]
         public string UserName { get; set; }
 
         [Display(Name = "First Name")]
         [Required(ErrorMessage = "First Name is required")]
-        [RegularExpression(@"^[a-zA-Z''-'\s]*$", ErrorMessage = "No numbers")]
+        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "No numbers")]
         public string FirstName { get; set; }
 
         [Display(Name = "Last Name")]
         [Required(ErrorMessage = "Last Name is required")]
-        [RegularExpression(@"^[a-zA-Z''-'\s]*$", ErrorMessage ="No numbers")]
+        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage ="No numbers")]
         public string LastName { get; set; }
 
         [Display(Name = "Phone Number")]
-        [DataType(DataType.PhoneNumber)]
         [Required(ErrorMessage = "Phone Number is required")]
+        [RegularExpression(@"^(?:\+?61|0)[2-478](?:[ -]?[0-9]){8}$", ErrorMessage = "Only valid Australia landline or mobile number")]
         public string PhoneNumber { get; set; }
 
         [Display(Name = "Date of Birth")]
         [DataType(DataType.Date)]
         [Required(ErrorMessage = "Date of Birth is required")]
+        [AgeLimit(ErrorMessage = "Age can not larger than 110")]
         public DateTime DateOfBirth { get; set; }
 
         public override string ToString()

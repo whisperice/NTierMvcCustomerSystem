@@ -12,7 +12,7 @@ namespace NTierMvcCustomerSystem.Common
 
         public const int NotExistCustomerId = -1;
 
-        public const string EmptyString = "";
+        public const int AgeLimit = 110;
 
         public const string DateOfBirthTimeFormat = "dd/MM/yyyy";
 
@@ -25,5 +25,6 @@ namespace NTierMvcCustomerSystem.Common
         public const string CustomersFileName = "Customers.json";
 
         public const string IdSeqFileName = "IdSequence.json";
+
     }
 }
