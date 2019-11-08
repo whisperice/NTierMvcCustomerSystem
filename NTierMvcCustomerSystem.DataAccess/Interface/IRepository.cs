@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NTierMvcCustomerSystem.DataAccess.Common
+namespace NTierMvcCustomerSystem.DataAccess.Interface
 {
     /// <summary>
     /// This interface contains common methods implemented by all repository classes.

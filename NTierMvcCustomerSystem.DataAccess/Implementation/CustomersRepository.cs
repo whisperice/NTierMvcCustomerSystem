@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using NTierMvcCustomerSystem.Common;
 using NTierMvcCustomerSystem.DataAccess.Common;
+using NTierMvcCustomerSystem.DataAccess.Interface;
 using NTierMvcCustomerSystem.DataAccess.Models;
 
-namespace NTierMvcCustomerSystem.DataAccess
+namespace NTierMvcCustomerSystem.DataAccess.Implementation
 {
     public class CustomersRepository : IRepository<CustomerEntity>
     {
@@ -156,7 +157,7 @@ namespace NTierMvcCustomerSystem.DataAccess
                 if (id < Constants.MinValidCustomerId)
                 {
                     throw new ArgumentException(
-                         "[CustomersRepository::DeleteById] CustomerEntity can not be null.", nameof(id));
+                         "[CustomersRepository::DeleteById] Id is not valid.", nameof(id));
                 }
 
                 var jObject = JsonFileHelper.ReadJsonFile(_customersFilePath, _customersFileName);
@@ -304,7 +305,7 @@ namespace NTierMvcCustomerSystem.DataAccess
                 {
                     _logger.Debug("[CustomersRepository::SelectByFirstOrLastName] Select customerEntity by Name Successfully. Entities: {0}", customerEntities);
                 }
-                return customerEntities != null ? customerEntities : new List<CustomerEntity>();
+                return customerEntities;
             }
             catch (Exception e)
             {
@@ -323,18 +324,19 @@ namespace NTierMvcCustomerSystem.DataAccess
         {
             if (customerEntityJObject == null)
             {
-                return new CustomerEntity { Id = Constants.NotExistCustomerId };
+                return null;
             }
 
-            var customerEntity = new CustomerEntity();
-            customerEntity.Id = (int)customerEntityJObject["Id"];
-            customerEntity.UserName = (string)customerEntityJObject["UserName"];
-            customerEntity.FirstName = (string)customerEntityJObject["FirstName"];
-            customerEntity.LastName = (string)customerEntityJObject["LastName"];
-            customerEntity.PhoneNumber = (string)customerEntityJObject["PhoneNumber"];
-            var dateStrings = ((string)customerEntityJObject["DateOfBirth"]).Split('/');
-            customerEntity.DateOfBirth = new DateTime(int.Parse(dateStrings[2]), int.Parse(dateStrings[1]), int.Parse(dateStrings[0]));
-            customerEntity.CallNoteName = (string)customerEntityJObject["CallNoteName"];
+            var customerEntity = new CustomerEntity
+            {
+                Id = (int) customerEntityJObject["Id"],
+                UserName = (string) customerEntityJObject["UserName"],
+                FirstName = (string) customerEntityJObject["FirstName"],
+                LastName = (string) customerEntityJObject["LastName"],
+                PhoneNumber = (string) customerEntityJObject["PhoneNumber"],
+                DateOfBirth = ((string) customerEntityJObject["DateOfBirth"]),
+                CallNoteName = (string) customerEntityJObject["CallNoteName"]
+            };
             return customerEntity;
         }
 
@@ -355,7 +357,7 @@ namespace NTierMvcCustomerSystem.DataAccess
                 ["FirstName"] = customerEntity.FirstName,
                 ["LastName"] = customerEntity.LastName,
                 ["PhoneNumber"] = customerEntity.PhoneNumber,
-                ["DateOfBirth"] = customerEntity.DateOfBirth.ToString(Constants.DateOfBirthTimeFormat),
+                ["DateOfBirth"] = customerEntity.DateOfBirth,
                 ["CallNoteName"] = customerEntity.CallNoteName
             };
             jArray.Add(o);
@@ -369,7 +371,7 @@ namespace NTierMvcCustomerSystem.DataAccess
             jObject["FirstName"] = customerEntity.FirstName;
             jObject["LastName"] = customerEntity.LastName;
             jObject["PhoneNumber"] = customerEntity.PhoneNumber;
-            jObject["DateOfBirth"] = customerEntity.DateOfBirth.ToString(Constants.DateOfBirthTimeFormat);
+            jObject["DateOfBirth"] = customerEntity.DateOfBirth;
             jObject["CallNoteName"] = customerEntity.CallNoteName;
         }
     }

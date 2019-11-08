@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NTierMvcCustomerSystem.Common;
-using NTierMvcCustomerSystem.DataAccess;
+using NTierMvcCustomerSystem.DataAccess.Implementation;
 using NTierMvcCustomerSystem.DataAccess.Models;
 using NTierMvcCustomerSystem.Tests.Common;
 
@@ -20,12 +20,19 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
         public void SelectByFirstOrLastName_GivenExistLastName_GetCustomerEntity()
         {
             var customersRepository = new CustomersRepository(TestConstants.DataSourcePath, CustomerFileName);
-            var entities = customersRepository.SelectByFirstOrLastName("BBCD");
+            var entities = customersRepository.SelectByFirstOrLastName("BB");
             foreach (var customerEntity in entities)
             {
-
                 Console.WriteLine(customerEntity);
             }
+        }
+
+        [TestMethod]
+        public void SelectByUserName_GivenExistUserName_GetCustomerEntity()
+        {
+            var customersRepository = new CustomersRepository(TestConstants.DataSourcePath, CustomerFileName);
+            var entity = customersRepository.SelectByUserName("whisper");
+            Console.WriteLine(entity);
         }
 
         [TestMethod]
@@ -39,7 +46,7 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
                 FirstName = "CC",
                 LastName = "BC",
                 PhoneNumber = "0422159753",
-                DateOfBirth = new DateTime(1995, 1, 1),
+                DateOfBirth = "01/01/1995",
                 CallNoteName = "water.json"
             };
 
@@ -59,7 +66,7 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
                 FirstName = "ZZZ",
                 LastName = "QQQ",
                 PhoneNumber = "0499999999",
-                DateOfBirth = new DateTime(1991, 10, 10),
+                DateOfBirth = "10/10/1990",
                 CallNoteName = "water.json"
             };
 

@@ -12,11 +12,15 @@ namespace NTierMvcCustomerSystem.Common
 
         public const int NotExistCustomerId = -1;
 
+        public const string EmptyString = "";
+
         public const string DateOfBirthTimeFormat = "dd/MM/yyyy";
 
         public const string DataSourcePathKey = "DataSourcePath";
 
         public const string CallNoteContentFolderName = "CallNote";
+
+        public const string PostfixOfNoteFile = ".json";
 
         public const string CustomersFileName = "Customers.json";
 

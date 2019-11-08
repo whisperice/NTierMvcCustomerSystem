@@ -194,6 +194,7 @@
     <Content Include="Views\Customers\ListAll.cshtml" />
     <Content Include="Views\Customers\Delete.cshtml" />
     <Content Include="Views\Customers\Details.cshtml" />
+    <Content Include="Views\Shared\ItemNotFound.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -213,6 +214,10 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NTierMvcCustomerSystem.BusinessLogic\NTierMvcCustomerSystem.BusinessLogic.csproj">
+      <Project>{CA16F94A-1CC9-4593-B468-B5C7E3657E45}</Project>
+      <Name>NTierMvcCustomerSystem.BusinessLogic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NTierMvcCustomerSystem.Common\NTierMvcCustomerSystem.Common.csproj">
       <Project>{9add8ed7-a987-40e4-a476-0a6f9a75fd49}</Project>
       <Name>NTierMvcCustomerSystem.Common</Name>

@@ -20,15 +20,15 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
             return null;
         }
 
-        /// <summary>
-        /// Add
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="fileName"></param>
-        /// <param name="callNotes"></param>
         public static void WriteCallNote(string filePath, string fileName, IList<CallNote> callNotes)
         {
 
         }
+
+        public static void WriteCallNoteAtIndex(string filePath, string fileName, CallNote callNote)
+        {
+
+        }
+
     }
 }

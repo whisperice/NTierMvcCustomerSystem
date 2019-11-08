@@ -1,4 +1,6 @@
-﻿namespace NTierMvcCustomerSystem.Tests.Common
+﻿using System.Reflection;
+
+namespace NTierMvcCustomerSystem.Tests.Common
 {
     class TestConstants
     {
@@ -6,6 +8,6 @@
 
         public const string CustomerFileName = "CustomersTest.json";
 
-
+        
     }
 }
