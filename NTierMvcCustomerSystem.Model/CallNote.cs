@@ -8,13 +8,13 @@ namespace NTierMvcCustomerSystem.Model
 {
     public class CallNote
     {
-        public DateTime DateTime { get; set; }
+        public DateTime NoteTime { get; set; }
         public string NoteContent { get; set; }
-        public ChildCallNote ChildCallNote { get; set; }
+        public IList<ChildCallNote> ChildCallNotes { get; set; }
 
         public override string ToString()
         {
-            return $"DateTime: {DateTime}, NoteContent: {NoteContent}, ChildCallNote: {ChildCallNote}";
+            return $"NoteTime: {NoteTime}, NoteContent: {NoteContent}, ChildCallNotes: {ChildCallNotes}";
         }
     }
 }

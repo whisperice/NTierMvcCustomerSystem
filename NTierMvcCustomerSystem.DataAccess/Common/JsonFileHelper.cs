@@ -16,13 +16,13 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
     /// </summary>
     public static class JsonFileHelper
     {
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static JObject ReadJsonFile(string filePath, string fileName)
         {
-            if (_logger.IsDebugEnabled)
+            if (Logger.IsDebugEnabled)
             {
-                _logger.Debug("[JsonFileHandler::ReadJsonFile] Reading file... FilePath: {0}, FileName: {1}", filePath, fileName);
+                Logger.Debug("[JsonFileHandler::ReadJsonFile] Reading file... FilePath: {0}, FileName: {1}", filePath, fileName);
             }
 
             try
@@ -44,9 +44,9 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
                     {
                         JObject jObject = (JObject)JToken.ReadFrom(reader);
 
-                        if (_logger.IsDebugEnabled)
+                        if (Logger.IsDebugEnabled)
                         {
-                            _logger.Debug("[JsonFileHandler::ReadJsonFile] Read file successfully... File: {0}",
+                            Logger.Debug("[JsonFileHandler::ReadJsonFile] Read file successfully... File: {}",
                                 fullFileName);
                         }
 
@@ -56,27 +56,27 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
             }
             catch (DirectoryNotFoundException e)
             {
-                _logger.Error(e, "[JsonFileHandler::ReadJsonFile] Directory: {0} not found.", filePath);
+                Logger.Error(e, "[JsonFileHandler::ReadJsonFile] Directory: {} not found.", filePath);
                 throw new DataAccessException($"JsonFileHandler::ReadJsonFile: Directory: {filePath} not found", e);
             }
             catch (FileNotFoundException e)
             {
                 var fullFileName = filePath + Path.DirectorySeparatorChar + fileName;
-                _logger.Error(e, "[JsonFileHandler::ReadJsonFile] File: {0} not found.", fullFileName);
+                Logger.Error(e, "[JsonFileHandler::ReadJsonFile] File: {0} not found.", fullFileName);
                 throw new DataAccessException($"JsonFileHandler::ReadJsonFile: File: {fullFileName} not found.", e);
             }
             catch (Exception e)
             {
-                _logger.Error(e, "[JsonFileHandler::ReadJsonFile] Read file error.");
+                Logger.Error(e, "[JsonFileHandler::ReadJsonFile] Read file error.");
                 throw new DataAccessException("JsonFileHandler::ReadJsonFile: Read file error.", e);
             }
         }
 
         public static void WriteJsonFile(string filePath, string fileName, JObject jObject)
         {
-            if (_logger.IsDebugEnabled)
+            if (Logger.IsDebugEnabled)
             {
-                _logger.Debug("[JsonFileHandler::WriteJsonFile] Writing file... FilePath: {0}, FileName: {1}", filePath, fileName);
+                Logger.Debug("[JsonFileHandler::WriteJsonFile] Writing file... FilePath: {0}, FileName: {1}", filePath, fileName);
             }
 
             try
@@ -102,9 +102,9 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
                         writer.Formatting = Formatting.Indented;
                         jObject.WriteTo(writer);
 
-                        if (_logger.IsDebugEnabled)
+                        if (Logger.IsDebugEnabled)
                         {
-                            _logger.Debug("[JsonFileHandler::WriteJsonFile] Read file successfully... File: {0}",
+                            Logger.Debug("[JsonFileHandler::WriteJsonFile] Read file successfully... File: {0}",
                                 fullFileName);
                         }
                     }
@@ -112,12 +112,12 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
             }
             catch (DirectoryNotFoundException e)
             {
-                _logger.Error(e, "[JsonFileHandler::WriteJsonFile] Directory: {0} not found.", filePath);
+                Logger.Error(e, "[JsonFileHandler::WriteJsonFile] Directory: {0} not found.", filePath);
                 throw new DataAccessException($"JsonFileHandler::WriteJsonFile: Directory: {filePath} not found", e);
             }
             catch (Exception e)
             {
-                _logger.Error(e, "[JsonFileHandler::WriteJsonFile] Read file error.");
+                Logger.Error(e, "[JsonFileHandler::WriteJsonFile] Read file error.");
                 throw new DataAccessException("JsonFileHandler::WriteJsonFile: Read file error.", e);
             }
         }

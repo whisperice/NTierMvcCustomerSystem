@@ -8,6 +8,5 @@ namespace NTierMvcCustomerSystem.Tests.Common
 
         public const string CustomerFileName = "CustomersTest.json";
 
-        
     }
 }

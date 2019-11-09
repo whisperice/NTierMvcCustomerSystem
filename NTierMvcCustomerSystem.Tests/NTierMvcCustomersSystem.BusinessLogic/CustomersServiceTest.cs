@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NTierMvcCustomerSystem.BusinessLogic.Implementation;
+using NTierMvcCustomerSystem.BusinessLogic.Services;
 using NTierMvcCustomerSystem.Common;
 using NTierMvcCustomerSystem.Model;
 using NTierMvcCustomerSystem.Tests.Common;
@@ -16,7 +16,7 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomersSystem.BusinessLogic
         [TestMethod]
         public void SelectAll_GivenAllGood_GetAllCustomers()
         {
-            var customersService = new CustomersService(CustomerFileName, TestConstants.DataSourcePath);
+            var customersService = new CustomersService( TestConstants.DataSourcePath, CustomerFileName);
             var customers = customersService.SelectAll();
             foreach (var customer in customers)
             {

@@ -4,14 +4,14 @@
 
 
 @{
-    ViewBag.Title = "Search";
+    ViewBag.Title = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Search</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")|
+    @Html.ActionLink("Create New", "Create") |
     @Html.ActionLink("List All", "ListAll")
 </p>
 
@@ -63,8 +63,10 @@
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id, userName = item.UserName }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id }) |
                 @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                @Html.ActionLink("Call Notes", "NoteDetails", new { userName = item.UserName }) 
+
             </td>
         </tr>
     }

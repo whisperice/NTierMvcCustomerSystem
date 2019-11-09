@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using NTierMvcCustomerSystem.BusinessLogic.Implementation;
+using NTierMvcCustomerSystem.BusinessLogic.Services;
 using NTierMvcCustomerSystem.Common;
 using NTierMvcCustomerSystem.Model;
 using PagedList;
@@ -12,8 +12,9 @@ namespace NTierMvcCustomerSystem.Controllers
 {
     public class CustomersController : Controller
     {
-        private CustomersService customersService = new CustomersService();
-        private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private readonly CustomersService _customersService = new CustomersService();
+        private readonly CallNotesService _callNotesService = new CallNotesService();
+        private readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public ActionResult Index()
         {
@@ -42,7 +43,7 @@ namespace NTierMvcCustomerSystem.Controllers
 
             try
             {
-                var isInserted = customersService.Insert(customer, out var id);
+                var isInserted = _customersService.Insert(customer, out var id);
                 customer.Id = id;
 
                 if (!isInserted)
@@ -85,7 +86,7 @@ namespace NTierMvcCustomerSystem.Controllers
 
             try
             {
-                var isUpdated = customersService.Update(customer);
+                var isUpdated = _customersService.Update(customer);
 
                 if (!isUpdated)
                 {
@@ -113,7 +114,7 @@ namespace NTierMvcCustomerSystem.Controllers
             {
                 _logger.Info("[CustomersController::Delete] Finding Details of Customers with Id: {} Before Delete Confirmed.", id);
 
-                var customer = customersService.SelectById(id);
+                var customer = _customersService.SelectById(id);
 
                 if (customer == null)
                 {
@@ -139,7 +140,7 @@ namespace NTierMvcCustomerSystem.Controllers
 
             try
             {
-                var isDeleted = customersService.DeleteById(id);
+                var isDeleted = _customersService.DeleteById(id);
 
                 if (!isDeleted)
                 {
@@ -180,13 +181,13 @@ namespace NTierMvcCustomerSystem.Controllers
 
                 if (!string.IsNullOrEmpty(searchString))
                 {
-                    customers = from customer in customersService.SelectByFirstOrLastName(searchString)
+                    customers = from customer in _customersService.SelectByFirstOrLastName(searchString)
                                 orderby customer.Id
                                 select customer;
                 }
                 else
                 {
-                    customers = from customer in customersService.SelectAll()
+                    customers = from customer in _customersService.SelectAll()
                                 orderby customer.Id
                                 select customer;
                 }
@@ -211,7 +212,7 @@ namespace NTierMvcCustomerSystem.Controllers
 
             try
             {
-                var customers = from customer in customersService.SelectAll()
+                var customers = from customer in _customersService.SelectAll()
                                 orderby customer.Id
                                 select customer;
 
@@ -232,7 +233,7 @@ namespace NTierMvcCustomerSystem.Controllers
 
             try
             {
-                var customer = customersService.SelectById(id);
+                var customer = _customersService.SelectById(id);
 
                 if (customer == null)
                 {
@@ -251,9 +252,24 @@ namespace NTierMvcCustomerSystem.Controllers
 
         }
 
+        public ActionResult NoteDetails(int id, string userName)
+        {
+            ViewBag.Id = id;
+
+            // try
+            return View();
+        }
+
         public ActionResult AddNote()
         {
-            return View();
+            // try
+            return View("NoteDetails");
+        }
+
+        public ActionResult AddChildNote()
+        {
+            // try
+            return View("NoteDetails");
         }
     }
 }

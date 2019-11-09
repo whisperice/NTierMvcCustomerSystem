@@ -13,9 +13,9 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
 {
     public class CustomersRepository : IRepository<CustomerEntity>
     {
-        private string _customersFileName;
-        private string _customersFilePath;
-        private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private readonly string _customersFileName;
+        private readonly string _customersFilePath;
+        private readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public CustomersRepository()
         {
@@ -24,7 +24,7 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
 
         }
 
-        // Normally use the default constructor, only use this one if need to write to a different path.
+        // Normally use the above default constructor, only use this one if need to write to a different path.
         public CustomersRepository(string customersFilePath, string customersFileName)
         {
             _customersFilePath = customersFilePath;
@@ -42,7 +42,7 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
         {
             if (_logger.IsDebugEnabled)
             {
-                _logger.Debug("[CustomersRepository::Insert] Starting insert costomerEntity.");
+                _logger.Debug("[CustomersRepository::Insert] Starting insert costomerEntity. CustomerEntity: {}", customerEntity);
             }
 
             try
@@ -60,7 +60,7 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
                 // Can't insert when there is a same userName
                 if (customerEntityJObject != null)
                 {
-                    _logger.Warn("[CustomersRepository::Insert] Can't insert when there is a same userName.");
+                    _logger.Warn("[CustomersRepository::Insert] Can't insert when there is a same userName. CustomerEntity: {}", customerEntity);
                     return false;
                 }
 
@@ -70,13 +70,13 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
 
                 if (_logger.IsDebugEnabled)
                 {
-                    _logger.Debug("[CustomersRepository::Insert] Insert customerEntity Successfully. InsertedEntity: {0}", customerEntity);
+                    _logger.Debug("[CustomersRepository::Insert] Insert customerEntity Successfully. InsertedEntity: {}", customerEntity);
                 }
                 return true;
             }
             catch (Exception e)
             {
-                _logger.Error(e, "[CustomersRepository::Insert] Insert customerEntity failed. Entity: {0}", customerEntity);
+                _logger.Error(e, "[CustomersRepository::Insert] Insert customerEntity failed. Entity: {}", customerEntity);
                 throw new DataAccessException("[CustomersRepository::Insert] Insert customerEntity failed.", e);
             }
         }
@@ -92,7 +92,7 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
         {
             if (_logger.IsDebugEnabled)
             {
-                _logger.Debug("[CustomersRepository::Update] Starting update customerEntity.");
+                _logger.Debug("[CustomersRepository::Update] Starting update customerEntity. CustomerEntity: {}", customerEntity);
             }
 
             try
@@ -111,7 +111,7 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
                 // Can't update if id and userName are not matched
                 if (customerEntityJObject == null)
                 {
-                    _logger.Warn("[CustomersRepository::Update] Can't update if id and userName are not matched.");
+                    _logger.Warn("[CustomersRepository::Update] Can't update if id and userName are not matched. CustomerEntity: {}", customerEntity);
                     return false;
                 }
 
@@ -135,7 +135,7 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
         {
             if (_logger.IsDebugEnabled)
             {
-                _logger.Debug("[CustomersRepository::DeleteById] Starting delete customerEntity.");
+                _logger.Debug("[CustomersRepository::DeleteById] Starting delete customerEntity. Id: {}", id);
             }
 
             try
@@ -147,7 +147,7 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
                 // Can't delete when there is no such id
                 if (customerEntityJObject == null)
                 {
-                    _logger.Debug("[CustomersRepository::DeleteById] Can't delete when there is no such id.");
+                    _logger.Debug("[CustomersRepository::DeleteById] Can't delete when there is no such id. Id: {}", id);
                     return false;
                 }
 
@@ -156,7 +156,7 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
 
                 if (_logger.IsDebugEnabled)
                 {
-                    _logger.Debug("[CustomersRepository::DeleteById] Delete customerEntity Successfully. DeletedEntity: {0}", 
+                    _logger.Debug("[CustomersRepository::DeleteById] Delete customerEntity Successfully. DeletedEntity: {}", 
                         JTokenToCustomerEntity(customerEntityJObject));
                 }
                 return true;

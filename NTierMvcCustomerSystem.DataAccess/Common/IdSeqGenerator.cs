@@ -10,35 +10,35 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
 {
     public static class IdSeqGenerator
     {
-        private static string _idSeqFileName = Constants.IdSeqFileName;
-        private static string _idSeqFilePath = ConfigurationHandler.GetDataSourcePath();
+        private static readonly string IdSeqFileName = Constants.IdSeqFileName;
+        private static readonly string IdSeqFilePath = ConfigurationHandler.GetDataSourcePath();
 
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static int GetIdSeq()
         {
-            if (_logger.IsDebugEnabled)
+            if (Logger.IsDebugEnabled)
             {
-                _logger.Debug("[IdSeqGenerator::GetIdSeq] Getting IdSeq.");
+                Logger.Debug("[IdSeqGenerator::GetIdSeq] Getting IdSeq.");
             }
 
             try
             {
-                var jObj = JsonFileHelper.ReadJsonFile(_idSeqFilePath, _idSeqFileName);
+                var jObj = JsonFileHelper.ReadJsonFile(IdSeqFilePath, IdSeqFileName);
                 var idSeq = (int)jObj["IdSeq"];
                 idSeq++;
                 jObj["IdSeq"] = idSeq;
-                JsonFileHelper.WriteJsonFile(_idSeqFilePath, _idSeqFileName, jObj);
+                JsonFileHelper.WriteJsonFile(IdSeqFilePath, IdSeqFileName, jObj);
 
-                if (_logger.IsDebugEnabled)
+                if (Logger.IsDebugEnabled)
                 {
-                    _logger.Debug("[IdSeqGenerator::GetIdSeq] Get IdSeq successfully. IdSeq: {0}", idSeq);
+                    Logger.Debug("[IdSeqGenerator::GetIdSeq] Get IdSeq successfully. IdSeq: {}", idSeq);
                 }
                 return idSeq;
             }
             catch (Exception e)
             {
-                _logger.Error(e, "[IdSeqGenerator::GetIdSeq] Get IdSeq error.");
+                Logger.Error(e, "[IdSeqGenerator::GetIdSeq] Get IdSeq error.");
                 throw new DataAccessException("IdSeqGenerator::GetIdSeq: Get IdSeq error.", e);
             }
         }

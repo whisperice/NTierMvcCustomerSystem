@@ -1,42 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NTierMvcCustomerSystem.BusinessLogic.Common;
 using NTierMvcCustomerSystem.BusinessLogic.Interface;
 using NTierMvcCustomerSystem.Common;
 using NTierMvcCustomerSystem.DataAccess.Common;
 using NTierMvcCustomerSystem.DataAccess.Implementation;
-using NTierMvcCustomerSystem.DataAccess.Interface;
 using NTierMvcCustomerSystem.DataAccess.Models;
 using NTierMvcCustomerSystem.Model;
 
-namespace NTierMvcCustomerSystem.BusinessLogic.Implementation
+namespace NTierMvcCustomerSystem.BusinessLogic.Services
 {
     public class CustomersService : IModelService<Customer>
     {
-        private string _customersFileName;
-        private string _customersFilePath;
-        private CustomersRepository _customersRepository = new CustomersRepository();
-        private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private readonly string _customersFilePath;
+
+        private readonly CallNotesService _callNotesService;
+        private readonly CustomersRepository _customersRepository;
+        private readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public CustomersService()
         {
-
+            _customersFilePath = ConfigurationHandler.GetDataSourcePath();
+            _callNotesService = new CallNotesService();
+            _customersRepository = new CustomersRepository();
         }
 
-        public CustomersService(string customersFileName, string customersFilePath)
+        public CustomersService(string customersFilePath, string customersFileName)
         {
-            _customersFileName = customersFileName;
             _customersFilePath = customersFilePath;
+            _callNotesService = new CallNotesService(customersFilePath, customersFileName);
+            _customersRepository = new CustomersRepository(customersFilePath, customersFileName);
         }
 
         public bool Insert(Customer customer, out int id)
         {
             if (_logger.IsDebugEnabled)
             {
-                _logger.Debug("[CustomersService::Insert] Starting insert customer.");
+                _logger.Debug("[CustomersService::Insert] Starting insert customer. Customer: {}", customer);
             }
 
             try
@@ -91,7 +92,7 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Implementation
 
                 if (_logger.IsDebugEnabled)
                 {
-                    _logger.Debug("[CustomersService::Insert] Insert customer Successfully. Inserted Customer: {0}", customer);
+                    _logger.Debug("[CustomersService::Insert] Insert customer Successfully. Inserted Customer: {}", customer);
                 }
 
                 id = customer.Id;
@@ -108,7 +109,7 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Implementation
         {
             if (_logger.IsDebugEnabled)
             {
-                _logger.Debug("[CustomersRepository::Update] Starting update customer.");
+                _logger.Debug("[CustomersRepository::Update] Starting update customer. Customer: {}", customer);
             }
 
             try
@@ -154,7 +155,7 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Implementation
                 // Can't update if id and userName are not matched
                 if (!isUpdated)
                 {
-                    _logger.Warn("[CustomersService::Update] Can't update if id and userName are not matched.");
+                    _logger.Warn("[CustomersService::Update] Can't update if id and userName are not matched. Customer: {}", customer);
                     return false;
                 }
 
@@ -175,7 +176,7 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Implementation
         {
             if (_logger.IsDebugEnabled)
             {
-                _logger.Debug("[CustomersService::DeleteById] Starting delete customer.");
+                _logger.Debug("[CustomersService::DeleteById] Starting delete customer. Id: {}", id);
             }
 
             try
@@ -186,6 +187,9 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Implementation
                         "[CustomersService::DeleteById] Id is not valid.", nameof(id));
                 }
 
+                // Get Customer Details before deleted
+                var customer = ToCustomer(_customersRepository.SelectById(id));
+                
                 var isDeleted = _customersRepository.DeleteById(id);
 
                 // Can't delete when there is no such id
@@ -194,6 +198,8 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Implementation
                     _logger.Warn("[CustomersService::DeleteById] Can't delete when there is no such id.");
                     return false;
                 }
+
+                _callNotesService.DeleteCallNotes(customer.UserName);
 
                 if (_logger.IsDebugEnabled)
                 {
@@ -212,7 +218,7 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Implementation
         {
             if (_logger.IsDebugEnabled)
             {
-                _logger.Debug("[CustomersService::SelectById] Starting select customerEntity by Id. Id : {0}", id);
+                _logger.Debug("[CustomersService::SelectById] Starting select customerEntity by Id. Id : {}", id);
             }
 
             try
@@ -227,7 +233,7 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Implementation
 
                 if (_logger.IsDebugEnabled)
                 {
-                    _logger.Debug("[CustomersService::SelectById] Select Customer by Id Successfully. customer: {0}", customer);
+                    _logger.Debug("[CustomersService::SelectById] Select Customer by Id Successfully. customer: {}", customer);
                 }
                 return customer;
             }

@@ -18,6 +18,8 @@ namespace NTierMvcCustomerSystem.Common
 
         public const int FirstPage = 1;
 
+        public const string DateTimeFormat = "dd/MM/yyyy HH:mm:ss";
+
         public const string DateOfBirthTimeFormat = "dd/MM/yyyy";
 
         public const string DataSourcePathKey = "DataSourcePath";

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
 using NTierMvcCustomerSystem.Common;
 using NTierMvcCustomerSystem.DataAccess.Common;
+using NTierMvcCustomerSystem.Model;
 using NTierMvcCustomerSystem.Tests.Common;
 
 namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
@@ -81,7 +83,8 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
             var dataSourcePath = TestConstants.DataSourcePath;
             var jObjectRead = JsonFileHelper.ReadJsonFile(dataSourcePath, CustomerFileName);
 
-            Assert.IsTrue(JObject.DeepEquals(jObject, jObjectRead));
+            Assert.IsTrue(JToken.DeepEquals(jObject, jObjectRead));
         }
+
     }
 }

@@ -13,13 +13,13 @@ namespace NTierMvcCustomerSystem.Common
     public static class ConfigurationHandler
     {
         private static string _dataSourcePath;
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static string GetAppSettingsValueByKey(string key)
         {
-            if (_logger.IsDebugEnabled)
+            if (Logger.IsDebugEnabled)
             {
-                _logger.Debug("[ConfigurationHandler::GetAppSettingsValueByKey] Getting key: {0}", key);
+                Logger.Debug("[ConfigurationHandler::GetAppSettingsValueByKey] Getting key: {0}", key);
             }
 
             try
@@ -32,34 +32,49 @@ namespace NTierMvcCustomerSystem.Common
                     throw new ConfigurationErrorsException(
                         $"Failed to find the AppSettings Key named '{key}' in App/Web.config.");
 
-                if (_logger.IsDebugEnabled)
+                if (Logger.IsDebugEnabled)
                 {
-                    _logger.Debug("[ConfigurationHandler::GetAppSettingsValueByKey] Key: {0}, Value: {1}", key, appSettingsValue);
+                    Logger.Debug("[ConfigurationHandler::GetAppSettingsValueByKey] Key: {0}, Value: {1}", key, appSettingsValue);
                 }
                 return appSettingsValue;
             }
             catch (Exception e)
             {
-                _logger.Error(e, "[ConfigurationHandler::GetAppSettingsValueByKey] Error occured.");
-                throw new CommonException("ConfigurationHandler::GetAppSettingsValueByKey: Error occured.", e);
+                Logger.Error(e, "[ConfigurationHandler::GetAppSettingsValueByKey] Error occured.");
+                throw new CommonException("[ConfigurationHandler::GetAppSettingsValueByKey] Error occured.", e);
             }
         }
 
         public static string GetDataSourcePath()
         {
+            if (Logger.IsTraceEnabled)
+            {
+                Logger.Trace("[ConfigurationHandler::GetDataSourcePath] Getting DataSourcePath");
+            }
+
             try
             {
                 if (!string.IsNullOrEmpty(_dataSourcePath))
                 {
+                    if (Logger.IsTraceEnabled)
+                    {
+                        Logger.Trace("[ConfigurationHandler::GetDataSourcePath] DataSourcePath Got. Path: {}", _dataSourcePath);
+                    }
                     return _dataSourcePath;
                 }
 
                 _dataSourcePath = GetAppSettingsValueByKey(Constants.DataSourcePathKey);
+
+                if (Logger.IsTraceEnabled)
+                {
+                    Logger.Trace("[ConfigurationHandler::GetDataSourcePath] DataSourcePath Got. Path: {}", _dataSourcePath);
+                }
                 return _dataSourcePath;
             }
             catch (Exception e)
             {
-                throw new CommonException("ConfigurationHandler::GetDataSourcePath:Error occured.", e);
+                Logger.Error("[ConfigurationHandler::GetDataSourcePath] Error occured.");
+                throw new CommonException("[ConfigurationHandler::GetDataSourcePath] Error occured.", e);
             }
         }
     }

@@ -50,7 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\BusinessLogicException.cs" />
-    <Compile Include="Implementation\CustomersService.cs" />
+    <Compile Include="Services\CallNotesService.cs" />
+    <Compile Include="Services\CustomersService.cs" />
     <Compile Include="Interface\IModelService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
