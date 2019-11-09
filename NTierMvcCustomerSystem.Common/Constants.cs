@@ -8,7 +8,7 @@ namespace NTierMvcCustomerSystem.Common
 {
     public static class Constants
     {
-        public const int MinValidCustomerId = 0;
+        public const int MinValidCustomerId = 1;
 
         public const int NotExistCustomerId = -1;
 

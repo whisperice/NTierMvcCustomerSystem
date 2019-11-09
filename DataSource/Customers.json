@@ -1,22 +1,23 @@
 {
-	"Customers": [
-		{
-			"Id": 1,
-			"UserName": "whisper",
-			"FirstName": "A",
-			"LastName": "BCD",
-			"PhoneNumber": "0412123123",
-			"DateOfBirth": "01/01/1990",
-			"CallNoteName": "whisper.json"
-		},
-		{
-			"Id": 2,
-			"UserName": "wing",
-			"FirstName": "AAA",
-			"LastName": "BBBCD",
-			"PhoneNumber": "0444321321",
-			"DateOfBirth": "01/01/2000",
-			"CallNoteName": "wing.json"
-		}
-	]
+  "Customers": [
+    {
+      "Id": 1,
+      "UserName": "whisper",
+      "FirstName": "A",
+      "LastName": "BCD",
+      "PhoneNumber": "0412123123",
+      "DateOfBirth": "01/01/1990",
+      "CallNoteName": "whisper.json"
+    },
+    {
+      "Id": 2,
+      "UserName": "wing",
+      "FirstName": "AAA",
+      "LastName": "BBBCD",
+      "PhoneNumber": "0444321321",
+      "DateOfBirth": "01/01/2000",
+      "CallNoteName": "wing.json"
+    }
+  ]
 }
+
