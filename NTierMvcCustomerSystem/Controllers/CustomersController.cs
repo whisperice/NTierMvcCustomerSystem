@@ -4,7 +4,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using NTierMvcCustomerSystem.BusinessLogic.Implementation;
+using NTierMvcCustomerSystem.Common;
 using NTierMvcCustomerSystem.Model;
+using PagedList;
 
 namespace NTierMvcCustomerSystem.Controllers
 {
@@ -15,62 +17,74 @@ namespace NTierMvcCustomerSystem.Controllers
 
         public ActionResult Index()
         {
-            return RedirectToAction("ListAll");
+            return RedirectToAction("Search");
         }
 
-        // GET: Customers/Create
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Customers/Create
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Create(Customer customer)
         {
+            ViewBag.IsNotUnique = false;
+            _logger.Info("[CustomersController::Create] Creating Customer: {}.", customer);
 
-            return View();
-//            if (!ModelState.IsValid)
-//            {
-//                return View();
-//            }
-//
-//            try
-//            {
-//                InsertEmployee(int.Parse(collection["Id"]),
-//                    collection["Name"],
-//                    int.Parse(collection["Age"]),
-//                    collection["HiringDate"].Trim().Length == 0
-//                        ? (DateTime?)null
-//                        : DateTime.ParseExact(collection["HiringDate"], "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None),
-//                    decimal.Parse(collection["GrossSalary"]));
-//
-//                return RedirectToAction("ListAll");
-//            }
-//            catch (Exception ex)
-//            {
-//                _loggingHandler.LogEntry(ExceptionHandler.GetExceptionMessageFormatted(ex), true);
-//                ViewBag.Message = Server.HtmlEncode(ex.Message);
-//                return View("Error");
-//            }
+            if (!ModelState.IsValid)
+            {
+                _logger.Info("[CustomersController::Create] Parameters not valid: {}.", customer);
+
+                return View();
+            }
+
+            try
+            {
+                var isInserted = customersService.Insert(customer, out var id);
+                customer.Id = id;
+
+                if (!isInserted)
+                {
+                    ViewBag.IsNotUnique = true;
+                    _logger.Warn("[CustomersController::Create] User Name should be unique. Details: {} ", customer);
+                    return View();
+                }
+
+                _logger.Info("[CustomersController::Create] Creating Customer Successfully. Details: {} ", customer);
+                return RedirectToAction("Details", new { id });
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "[CustomersController::Create] Creating New Customer Failed.");
+                return View("Error");
+            }
         }
 
-        // GET: Customers/Edit
-        public ActionResult Edit(int id)
+        [HttpGet]
+        public ActionResult Edit(int id, string userName)
         {
-            return View();
+            var customer = new Customer { Id = id, UserName = userName };
+            return View(customer);
+
         }
 
-        // POST: Customers/Edit
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Customer customer)
         {
             _logger.Info("[CustomersController::Edit] Editing Customer with id :{}.", id);
 
+            if (!ModelState.IsValid)
+            {
+                _logger.Info("[CustomersController::Edit] Parameters not valid: {}.", customer);
+
+                return View();
+            }
+
             try
             {
-                var customerSelectById = customersService.SelectById(id);
-                customer.UserName = customerSelectById.UserName;
                 var isUpdated = customersService.Update(customer);
 
                 if (!isUpdated)
@@ -81,7 +95,7 @@ namespace NTierMvcCustomerSystem.Controllers
                 }
 
                 _logger.Info("[CustomersController::Edit] Editing Customer with id :{} Successfully. Details: {} ", id, customer);
-                return RedirectToAction("Details", new {id});
+                return RedirectToAction("Details", new { id });
             }
             catch (Exception e)
             {
@@ -90,7 +104,7 @@ namespace NTierMvcCustomerSystem.Controllers
             }
         }
 
-        // GET: Customers/Delete/id
+        [HttpGet]
         public ActionResult Delete(int id)
         {
             _logger.Info("[CustomersController::Delete] Deleting Customers with Id: {} Before Delete Confirmed..", id);
@@ -98,7 +112,7 @@ namespace NTierMvcCustomerSystem.Controllers
             try
             {
                 _logger.Info("[CustomersController::Delete] Finding Details of Customers with Id: {} Before Delete Confirmed.", id);
-                
+
                 var customer = customersService.SelectById(id);
 
                 if (customer == null)
@@ -117,8 +131,8 @@ namespace NTierMvcCustomerSystem.Controllers
             }
         }
 
-        // POST: Employees/Delete/id
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, Customer customer)
         {
             _logger.Info("[CustomersController::Delete] Deleting Customers with Id: {} After Delete Confirmed.", id);
@@ -139,27 +153,58 @@ namespace NTierMvcCustomerSystem.Controllers
                 // todo: indicate delete successfully
                 return RedirectToAction("ListAll");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.Error(e, "[CustomersController::Delete] Deleting Customer with Id: {} After Delete Confirmed Error.", id);
                 return View("Error");
             }
         }
 
-        // GET: Customers/Search
-        public ActionResult Search()
+        public ActionResult Search(string currentFilter, string searchString, int? page)
         {
-            return View();
+            _logger.Info("[CustomersController::Search] Searching Customers. Search key word: {}", searchString);
+
+            try
+            {
+                if (searchString != null)
+                {
+                    page = Constants.FirstPage;
+                }
+                else
+                {
+                    searchString = currentFilter;
+                }
+                ViewBag.CurrentFilter = searchString;
+
+                IEnumerable<Customer> customers;
+
+                if (!string.IsNullOrEmpty(searchString))
+                {
+                    customers = from customer in customersService.SelectByFirstOrLastName(searchString)
+                                orderby customer.Id
+                                select customer;
+                }
+                else
+                {
+                    customers = from customer in customersService.SelectAll()
+                                orderby customer.Id
+                                select customer;
+                }
+
+                int pageSize = Constants.PageSize;
+                int pageNumber = page ?? Constants.FirstPage;
+
+                _logger.Info("[CustomersController::Search] Finding All Customers Successfully. Search key word: {}", searchString);
+                return View(customers.ToPagedList(pageNumber, pageSize));
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "[CustomersController::Search] Searching Customers Error. Search key word: {}", searchString);
+                return View("Error");
+            }
         }
 
-        // POST: Customers/Search
-        [HttpPost]
-        public ActionResult Search(Customer customer)
-        {
-            return View();
-        }
-
-        // GET: Customers/ListAll
+        [HttpGet]
         public ActionResult ListAll()
         {
             _logger.Info("[CustomersController::ListAll] Finding All Customers.");
@@ -180,11 +225,7 @@ namespace NTierMvcCustomerSystem.Controllers
             }
         }
 
-        public ActionResult AddNote()
-        {
-            return View();
-        }
-
+        [HttpGet]
         public ActionResult Details(int id)
         {
             _logger.Info("[CustomersController::Details] Finding Details of Customers with Id: {}.", id);
@@ -208,6 +249,11 @@ namespace NTierMvcCustomerSystem.Controllers
                 return View("Error");
             }
 
+        }
+
+        public ActionResult AddNote()
+        {
+            return View();
         }
     }
 }

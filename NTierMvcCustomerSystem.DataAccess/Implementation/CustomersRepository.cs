@@ -263,12 +263,6 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
 
             try
             {
-                if (string.IsNullOrEmpty(name))
-                {
-                    throw new ArgumentNullException(
-                        nameof(name), "[CustomersRepository::SelectByFirstOrLastName] Name can not be null or empty.");
-                }
-
                 var jObject = JsonFileHelper.ReadJsonFile(_customersFilePath, _customersFileName);
 
                 var customerEntities = jObject["Customers"]

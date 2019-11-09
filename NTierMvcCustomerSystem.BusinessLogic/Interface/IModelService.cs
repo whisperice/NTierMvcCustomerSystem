@@ -12,7 +12,7 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Interface
     /// <typeparam name="TModel">The class of the model that are handled</typeparam>
     public interface IModelService<TModel> where TModel : class
     {
-        bool Insert(TModel entity);
+        bool Insert(TModel entity, out int id);
         bool Update(TModel entity);
         bool DeleteById(int id);
         TModel SelectById(int id);

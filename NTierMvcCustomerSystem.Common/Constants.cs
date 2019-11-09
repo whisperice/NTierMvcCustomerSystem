@@ -14,6 +14,10 @@ namespace NTierMvcCustomerSystem.Common
 
         public const int AgeLimit = 110;
 
+        public const int PageSize = 3;
+
+        public const int FirstPage = 1;
+
         public const string DateOfBirthTimeFormat = "dd/MM/yyyy";
 
         public const string DataSourcePathKey = "DataSourcePath";

@@ -18,7 +18,7 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Implementation
     {
         private string _customersFileName;
         private string _customersFilePath;
-        private IRepository<CustomerEntity> _customersRepository = new CustomersRepository();
+        private CustomersRepository _customersRepository = new CustomersRepository();
         private NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public CustomersService()
@@ -32,7 +32,7 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Implementation
             _customersFilePath = customersFilePath;
         }
 
-        public bool Insert(Customer customer)
+        public bool Insert(Customer customer, out int id)
         {
             if (_logger.IsDebugEnabled)
             {
@@ -85,6 +85,7 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Implementation
                 if (!isInserted)
                 {
                     _logger.Warn("[CustomersService::Insert] Can't insert when there is a same userName.");
+                    id = Constants.NotExistCustomerId;
                     return false;
                 }
 
@@ -92,6 +93,8 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Implementation
                 {
                     _logger.Debug("[CustomersService::Insert] Insert customer Successfully. Inserted Customer: {0}", customer);
                 }
+
+                id = customer.Id;
                 return true;
             }
             catch (Exception e)
@@ -232,6 +235,36 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Implementation
             {
                 _logger.Error(e, "[CustomersService::SelectById] Select customer by Id failed. Id : {0}", id);
                 throw new BusinessLogicException("[CustomersService::SelectById] Select customer by Id failed.", e);
+            }
+        }
+
+        public IList<Customer> SelectByFirstOrLastName(string name)
+        {
+            if (_logger.IsDebugEnabled)
+            {
+                _logger.Debug("[CustomersService::SelectByFirstOrLastName] Starting select customer by Name. Name : {0}", name);
+            }
+
+            try
+            {
+                if (name == null)
+                {
+                    throw new ArgumentNullException(
+                        nameof(name), "[CustomersService::SelectByFirstOrLastName] Name can not be null.");
+                }
+
+                var customers = _customersRepository.SelectByFirstOrLastName(name).Select(ToCustomer).ToList();
+
+                if (_logger.IsDebugEnabled)
+                {
+                    _logger.Debug("[CustomersRCustomersServiceepository::SelectByFirstOrLastName] Select customer by Name Successfully. Entities: {0}", customers);
+                }
+                return customers;
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "[CustomersService::SelectByFirstOrLastName] Select customer by Name failed. Name : {0}", name);
+                throw new BusinessLogicException("[CustomersService::SelectByFirstOrLastName] Select customer by Name failed.", e);
             }
         }
 
