@@ -1,4 +1,4 @@
-# NTierMvcCustomerSystem
+# N-Tier Mvc Customer System
 A Customer Management System, which follows Model-View-Controller MVC Presentation Pattern and the N-Tiers Deployment Architecture Pattern.
 
 NOTE:
