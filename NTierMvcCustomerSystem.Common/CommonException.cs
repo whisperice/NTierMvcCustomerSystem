@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NTierMvcCustomerSystem.Common
 {
-    class CommonException : Exception
+    public class CommonException : Exception
     {
         public CommonException()
         {

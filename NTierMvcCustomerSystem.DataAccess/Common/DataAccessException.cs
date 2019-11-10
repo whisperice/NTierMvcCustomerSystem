@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NTierMvcCustomerSystem.DataAccess.Common
 {
-    class DataAccessException : Exception
+    public class DataAccessException : Exception
     {
         public DataAccessException()
         {

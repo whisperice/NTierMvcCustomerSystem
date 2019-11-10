@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NTierMvcCustomerSystem.BusinessLogic.Common
 {
-    class BusinessLogicException : Exception
+    public class BusinessLogicException : Exception
     {
         public BusinessLogicException()
         {

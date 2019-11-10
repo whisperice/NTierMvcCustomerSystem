@@ -25,6 +25,7 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
 
             try
             {
+                // if IdSeq file not exist, create a new one
                 if (!File.Exists(Path.Combine(IdSeqFilePath, IdSeqFileName)))
                 {
                     var jObject = new JObject { ["IdSeq"] = Constants.InitIdSeq };
