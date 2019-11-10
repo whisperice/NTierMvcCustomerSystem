@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,12 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
 
             try
             {
+                if (!File.Exists(Path.Combine(IdSeqFilePath, IdSeqFileName)))
+                {
+                    var jObject = new JObject { ["IdSeq"] = Constants.InitIdSeq };
+                    JsonFileHelper.WriteJsonFile(IdSeqFilePath, IdSeqFileName, jObject);
+                }
+
                 var jObj = JsonFileHelper.ReadJsonFile(IdSeqFilePath, IdSeqFileName);
                 var idSeq = (int)jObj["IdSeq"];
                 idSeq++;

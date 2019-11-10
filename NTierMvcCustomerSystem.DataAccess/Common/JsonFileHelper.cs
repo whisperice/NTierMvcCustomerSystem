@@ -37,7 +37,7 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
                     throw new ArgumentNullException(nameof(fileName), "The file path can't be Null or Empty.");
                 }
 
-                var fullFileName = filePath + Path.DirectorySeparatorChar + fileName;
+                var fullFileName = Path.Combine(filePath, fileName);
                 using (StreamReader file = File.OpenText(fullFileName))
                 {
                     using (JsonTextReader reader = new JsonTextReader(file))
@@ -57,13 +57,16 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
             catch (DirectoryNotFoundException e)
             {
                 Logger.Error(e, "[JsonFileHandler::ReadJsonFile] Directory: {} not found.", filePath);
-                throw new DataAccessException($"JsonFileHandler::ReadJsonFile: Directory: {filePath} not found", e);
+                if (!string.IsNullOrWhiteSpace(filePath))
+                {
+                    Directory.CreateDirectory(filePath);
+                }
+                throw new DirectoryNotFoundException($"JsonFileHandler::ReadJsonFile: Directory: {filePath} not found", e);
             }
             catch (FileNotFoundException e)
             {
-                var fullFileName = filePath + Path.DirectorySeparatorChar + fileName;
-                Logger.Error(e, "[JsonFileHandler::ReadJsonFile] File: {0} not found.", fullFileName);
-                throw new DataAccessException($"JsonFileHandler::ReadJsonFile: File: {fullFileName} not found.", e);
+                Logger.Error(e, "[JsonFileHandler::ReadJsonFile] File: {0} not found. FilePath: {0}, FileName: {1}", filePath, fileName);
+                throw new FileNotFoundException($"JsonFileHandler::ReadJsonFile: FilePath: {filePath}, FileName: {fileName}", e);
             }
             catch (Exception e)
             {
@@ -72,7 +75,7 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
             }
         }
 
-        public static void WriteJsonFile(string filePath, string fileName, JObject jObject)
+        public static void WriteJsonFile(string filePath, string fileName, JToken jObject)
         {
             if (Logger.IsDebugEnabled)
             {
@@ -94,7 +97,7 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
                 // Create directory if it is not exist
                 Directory.CreateDirectory(filePath);
 
-                var fullFileName = filePath + Path.DirectorySeparatorChar + fileName;
+                var fullFileName = Path.Combine(filePath, fileName);
                 using (StreamWriter file = File.CreateText(fullFileName))
                 {
                     using (JsonTextWriter writer = new JsonTextWriter(file))
@@ -104,7 +107,7 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
 
                         if (Logger.IsDebugEnabled)
                         {
-                            Logger.Debug("[JsonFileHandler::WriteJsonFile] Read file successfully... File: {0}",
+                            Logger.Debug("[JsonFileHandler::WriteJsonFile] Write file successfully... File: {0}",
                                 fullFileName);
                         }
                     }
@@ -113,7 +116,12 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
             catch (DirectoryNotFoundException e)
             {
                 Logger.Error(e, "[JsonFileHandler::WriteJsonFile] Directory: {0} not found.", filePath);
-                throw new DataAccessException($"JsonFileHandler::WriteJsonFile: Directory: {filePath} not found", e);
+                throw new DirectoryNotFoundException($"JsonFileHandler::WriteJsonFile: Directory: {filePath} not found", e);
+            }
+            catch (FileNotFoundException e)
+            {
+                Logger.Error(e, "[JsonFileHandler::WriteJsonFile] File: {0} not found. FilePath: {0}, FileName: {1}", filePath, fileName);
+                throw new FileNotFoundException($"JsonFileHandler::WriteJsonFile: FilePath: {filePath}, FileName: {fileName}", e);
             }
             catch (Exception e)
             {

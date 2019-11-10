@@ -1,0 +1,69 @@
+﻿@model IEnumerable<NTierMvcCustomerSystem.Model.CallNote>
+
+@{
+    ViewBag.Title = "Note Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>NoteDetails</h2>
+
+<p>
+    @Html.ActionLink("New Note", "AddNote", new { id = ViewBag.Id, userName = ViewBag.UserName }) |
+    @if (ViewBag.ShowAddChildCallNote)
+    {
+        @Html.ActionLink("Add Child Note", "AddChildNote", new { id = ViewBag.Id, userName = ViewBag.UserName })
+    }
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.NoteTime)
+        </th>
+        <th colspan="8" width="80%">
+            @Html.DisplayNameFor(model => model.NoteContent)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NoteTime)
+            </td>
+            <td colspan="8" width="80%">
+                @Html.DisplayFor(modelItem => item.NoteContent)
+            </td>
+        </tr>
+
+        if (item.ChildCallNotes.Count != 0)
+        {
+            <tr>
+                <th></th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ChildCallNotes[0].NoteTime)
+                </th>
+                <th colspan="6" width="60%">
+                    @Html.DisplayNameFor(model => model.ChildCallNotes[0].NoteContent)
+                </th>
+            </tr>
+
+            foreach (var itemElement in item.ChildCallNotes)
+            {
+                <tr>
+                    <td></td>
+                    <td>
+                        @Html.DisplayFor(modelItemElement => itemElement.NoteTime)
+                    </td>
+                    <td colspan="6" width="60%">
+                        @Html.DisplayFor(modelItemElement => itemElement.NoteContent)
+                    </td>
+                </tr>
+            }
+        }
+    }
+</table>
+
+<div>
+    @Html.ActionLink("Back to Details", "Details", "Customers", new { id = ViewBag.Id }, null) |
+    @Html.ActionLink("Back to List", "Index", "Customers")
+</div>

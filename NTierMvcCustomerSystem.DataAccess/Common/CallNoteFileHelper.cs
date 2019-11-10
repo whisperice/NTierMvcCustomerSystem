@@ -33,13 +33,25 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
 
                 if (Logger.IsDebugEnabled)
                 {
-                    Logger.Debug("[CallNoteFileHelper::ReadCallNotes] Reading all CallNotes Successfully. callNotes: {}", callNotes);
+                    Logger.Debug(
+                        "[CallNoteFileHelper::ReadCallNotes] Reading all CallNotes Successfully. callNotes: {}",
+                        callNotes);
                 }
+
                 return callNotes;
+            }
+            catch (FileNotFoundException e)
+            {
+                Logger.Error(e,
+                    "[CallNoteFileHelper::ReadCallNotes] Reading all CallNotes Failed. Can not find file. FilePath: {}, FileName: {}",
+                    filePath, fileName);
+                throw new FileNotFoundException("[CallNoteFileHelper::ReadCallNotes] Reading all CallNotes Failed. Can not find file.", e);
             }
             catch (Exception e)
             {
-                Logger.Error(e, "[CallNoteFileHelper::ReadCallNotes] Reading all CallNotes Failed. FilePath: {}, FileName: {}", filePath, fileName);
+                Logger.Error(e,
+                    "[CallNoteFileHelper::ReadCallNotes] Reading all CallNotes Failed. FilePath: {}, FileName: {}",
+                    filePath, fileName);
                 throw new DataAccessException("[CallNoteFileHelper::ReadCallNotes] Reading all CallNotes Failed.", e);
             }
         }
@@ -59,7 +71,7 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
                 }
 
                 var jArray = new JArray();
-                var jObject = new JObject { ["CallNotes"] = jArray };
+                var jObject = new JObject {["CallNotes"] = jArray};
 
                 foreach (var callNote in callNotes)
                 {
@@ -73,12 +85,23 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
 
                 if (Logger.IsDebugEnabled)
                 {
-                    Logger.Debug("[CallNoteFileHelper::WriteCallNotes] Writing all CallNotes Successfully. callNotes: {}", callNotes);
+                    Logger.Debug(
+                        "[CallNoteFileHelper::WriteCallNotes] Writing all CallNotes Successfully. callNotes: {}",
+                        callNotes);
                 }
+            }
+            catch (FileNotFoundException e)
+            {
+                Logger.Error(e,
+                    "[CallNoteFileHelper::WriteCallNotes] Writing all CallNotes Failed. Can not find file. FilePath: {}, FileName: {}",
+                    filePath, fileName);
+                throw new FileNotFoundException("[CallNoteFileHelper::WriteCallNotes] Writing all CallNotes Failed. Can not find file.", e);
             }
             catch (Exception e)
             {
-                Logger.Error(e, "[CallNoteFileHelper::WriteCallNotes] Writing all CallNotes Failed. FilePath: {}, FileName: {}", filePath, fileName);
+                Logger.Error(e,
+                    "[CallNoteFileHelper::WriteCallNotes] Writing all CallNotes Failed. FilePath: {}, FileName: {}",
+                    filePath, fileName);
                 throw new DataAccessException("[CallNoteFileHelper::WriteCallNotes] Writing all CallNotes Failed.", e);
             }
         }
@@ -102,18 +125,31 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
                     throw new ArgumentNullException(nameof(fileName), "The file path can't be Null or Empty.");
                 }
 
-                var fullFileName = filePath + Path.DirectorySeparatorChar + fileName;
+                var fullFileName = Path.Combine(filePath, fileName);
                 File.Delete(fullFileName);
 
                 if (Logger.IsDebugEnabled)
                 {
-                    Logger.Debug("[CallNoteFileHelper::DeleteCallNotes] Delete single CallNotes file Successfully. fullFileName: {}", fullFileName);
+                    Logger.Debug(
+                        "[CallNoteFileHelper::DeleteCallNotes] Delete single CallNotes file Successfully. fullFileName: {}",
+                        fullFileName);
                 }
+            }
+            catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
+            {
+                Logger.Error(e,
+                    "[CallNoteFileHelper::DeleteCallNotes] Delete single CallNotes file Failed. Can not find file. FilePath: {}, FileName: {}",
+                    filePath, fileName);
+                throw new FileNotFoundException(
+                    "[CallNoteFileHelper::DeleteCallNotes] Delete single CallNotes file Failed. Can not find file.", e);
             }
             catch (Exception e)
             {
-                Logger.Error(e, "[CallNoteFileHelper::DeleteCallNotes] Delete single CallNotes file Failed. FilePath: {}, FileName: {}", filePath, fileName);
-                throw new DataAccessException("[CallNoteFileHelper::DeleteCallNotes] Delete single CallNotes file Failed.", e);
+                Logger.Error(e,
+                    "[CallNoteFileHelper::DeleteCallNotes] Delete single CallNotes file Failed. FilePath: {}, FileName: {}",
+                    filePath, fileName);
+                throw new DataAccessException(
+                    "[CallNoteFileHelper::DeleteCallNotes] Delete single CallNotes file Failed.", e);
             }
         }
 
@@ -162,7 +198,7 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
 
             var callNote = new CallNote
             {
-                NoteTime = (DateTime)callNoteJObject["NoteTime"],
+                NoteTime = DateTime.ParseExact((string)callNoteJObject["NoteTime"], Constants.DateTimeFormat, null),
                 NoteContent = (string)callNoteJObject["NoteContent"],
                 ChildCallNotes = new List<ChildCallNote>()
             };
@@ -172,7 +208,7 @@ namespace NTierMvcCustomerSystem.DataAccess.Common
             {
                 var childCallNote = new ChildCallNote
                 {
-                    NoteTime = (DateTime)jToken["NoteTime"],
+                    NoteTime = DateTime.ParseExact((string)jToken["NoteTime"], Constants.DateTimeFormat, null),
                     NoteContent = (string)jToken["NoteContent"]
                 };
                 callNote.ChildCallNotes.Add(childCallNote);

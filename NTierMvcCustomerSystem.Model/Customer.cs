@@ -11,7 +11,7 @@ namespace NTierMvcCustomerSystem.Model
 
         [Display(Name = "User Name")]
         [Required(ErrorMessage = "User Name is required")]
-        [RegularExpression(@"^[a-zA-Z0-9]{5,20}$", ErrorMessage = "Must be 5-20 characters")]
+        [RegularExpression(@"^[a-zA-Z0-9]{5,20}$", ErrorMessage = "Must be 5-20 characters; Only letter or number")]
         public string UserName { get; set; }
 
         [Display(Name = "First Name")]

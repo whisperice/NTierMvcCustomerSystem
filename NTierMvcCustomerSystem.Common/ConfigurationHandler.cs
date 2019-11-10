@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Configuration;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -60,16 +62,23 @@ namespace NTierMvcCustomerSystem.Common
                     {
                         Logger.Trace("[ConfigurationHandler::GetDataSourcePath] DataSourcePath Got. Path: {}", _dataSourcePath);
                     }
-                    return _dataSourcePath;
+                    return Path.Combine(_dataSourcePath, Constants.DataSourcePathSegment);
                 }
 
-                _dataSourcePath = GetAppSettingsValueByKey(Constants.DataSourcePathKey);
+                // Get the executing directory, if the DataSource Path has not been assigned
+                _dataSourcePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+                // If can not get the executing directory, use the path set in the App setting
+                if (string.IsNullOrEmpty(_dataSourcePath))
+                {
+                    _dataSourcePath = GetAppSettingsValueByKey(Constants.DataSourcePathKey);
+                }
 
                 if (Logger.IsTraceEnabled)
                 {
                     Logger.Trace("[ConfigurationHandler::GetDataSourcePath] DataSourcePath Got. Path: {}", _dataSourcePath);
                 }
-                return _dataSourcePath;
+                return Path.Combine(_dataSourcePath, Constants.DataSourcePathSegment);
             }
             catch (Exception e)
             {

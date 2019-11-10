@@ -1,0 +1,36 @@
+{
+  "CallNotes": [
+    {
+      "NoteTime": "02/02/1999 21:14:14",
+      "NoteContent": "Note1",
+      "ChildCallNotes": [
+        {
+          "NoteTime": "02/02/1999 23:14:14",
+          "NoteContent": "Note12"
+        },
+        {
+          "NoteTime": "02/02/1999 23:34:14",
+          "NoteContent": "Note123"
+        }
+      ]
+    },
+    {
+      "NoteTime": "02/02/2000 21:14:14",
+      "NoteContent": "Note2",
+      "ChildCallNotes": [
+        {
+          "NoteTime": "02/02/2000 23:14:14",
+          "NoteContent": "Note22"
+        },
+        {
+          "NoteTime": "02/02/2000 23:34:14",
+          "NoteContent": "Note223"
+        },
+        {
+          "NoteTime": "02/02/1999 23:14:14",
+          "NoteContent": "Note12"
+        }
+      ]
+    }
+  ]
+}

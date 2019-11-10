@@ -23,14 +23,13 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Services
         public CallNotesService()
         {
             _customersRepository = new CustomersRepository();
-            _callNotesFilePath = ConfigurationHandler.GetDataSourcePath() + Path.DirectorySeparatorChar +
-                                 Constants.CallNoteContentFolderName;
+            _callNotesFilePath = Path.Combine(ConfigurationHandler.GetDataSourcePath(), Constants.CallNoteContentFolderName);
         }
 
         public CallNotesService(string customersFilePath, string customersFileName)
         {
             _customersRepository = new CustomersRepository(customersFilePath, customersFileName);
-            _callNotesFilePath = customersFilePath + Path.DirectorySeparatorChar + Constants.CallNoteContentFolderName;
+            _callNotesFilePath = Path.Combine(customersFilePath, Constants.CallNoteContentFolderName);
         }
 
         public IList<CallNote> GetAllCallNotes(string userName)
@@ -65,6 +64,12 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Services
                 }
 
                 return callNotes;
+            }
+            catch (FileNotFoundException e)
+            {
+                _logger.Error(e, "[CallNotesService::GetAllCallNotes] Can not find file. UserName: {}",
+                    userName);
+                return new List<CallNote>();
             }
             catch (Exception e)
             {
@@ -114,6 +119,12 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Services
                         userName, callNote);
                 }
             }
+            catch (FileNotFoundException e)
+            {
+                _logger.Error(e, "[CallNotesService::WriteCallNote] Can not find file. UserName: {}",
+                    userName);
+                throw new FileNotFoundException("[CallNotesService::WriteCallNote] Can not find file. UserName: {}", e);
+            }
             catch (Exception e)
             {
                 _logger.Error(e,
@@ -123,7 +134,7 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Services
             }
         }
 
-        public void WriteChildCallNotes(string userName, ChildCallNote childCallNote)
+        public void WriteChildCallNote(string userName, ChildCallNote childCallNote)
         {
             if (_logger.IsDebugEnabled)
             {
@@ -148,7 +159,7 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Services
                 if (customerEntity == null)
                 {
                     throw new BusinessLogicException(
-                        $"[CallNotesService::GetAllCallNotes] Can not find this User by userName. UserName: {userName}");
+                        $"[CallNotesService::WriteChildCallNotes] Can not find this User by userName. UserName: {userName}");
                 }
 
                 var fileName = customerEntity.CallNoteName;
@@ -172,6 +183,12 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Services
                         userName, childCallNote);
                 }
             }
+            catch (FileNotFoundException e)
+            {
+                _logger.Error(e, "[CallNotesService::WriteChildCallNotes] Can not find file. UserName: {}",
+                    userName);
+                throw new FileNotFoundException("[CallNotesService::WriteChildCallNotes] Can not find file. UserName: {}", e);
+            }
             catch (Exception e)
             {
                 _logger.Error(e,
@@ -180,6 +197,45 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Services
                 throw new BusinessLogicException(
                     "[CallNotesService::WriteChildCallNotes] Writing ChildCallNote failed.", e);
             }
+        }
+
+        public void CreateCallNotesFile(string userName)
+        {
+            if (_logger.IsDebugEnabled)
+            {
+                _logger.Debug("[CallNotesService::CreateCallNotesFile] Creating CallNote File. UserName: {}", userName);
+            }
+
+            try
+            {
+                if (userName == null)
+                {
+                    throw new ArgumentNullException(nameof(userName), "User Name can not be null");
+                }
+
+                var customerEntity = _customersRepository.SelectByUserName(userName);
+                if (customerEntity == null)
+                {
+                    throw new BusinessLogicException(
+                        $"[CallNotesService::CreateCallNotesFile] Can not find this User by userName. UserName: {userName}");
+                }
+
+                var fileName = customerEntity.CallNoteName;
+                CallNoteFileHelper.WriteCallNotes(_callNotesFilePath, fileName, new List<CallNote>());
+
+                if (_logger.IsDebugEnabled)
+                {
+                    _logger.Debug(
+                        "[CallNotesService::CreateCallNotesFile] Creating CallNote File successfully. UserName: {}", userName);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e,
+                    "[CallNotesService::CreateCallNotesFile] Creating CallNote File failed. UserName: {}", userName);
+                throw new BusinessLogicException("[CallNotesService::CreateCallNotesFile] Creating CallNote File failed.", e);
+            }
+
         }
 
         public void DeleteCallNotes(string userName)
@@ -213,6 +269,11 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Services
                         "[CallNotesService::DeleteCallNotes] Delete a single CallNotes file successfully. UserName: {}",
                         userName);
                 }
+            }
+            catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
+            {
+                _logger.Error(e, "[CallNotesService::DeleteCallNotes] Can not find file. UserName: {}",
+                    userName);
             }
             catch (Exception e)
             {

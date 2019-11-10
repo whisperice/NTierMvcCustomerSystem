@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -24,6 +25,7 @@ namespace NTierMvcCustomerSystem.Controllers
         [HttpGet]
         public ActionResult Create()
         {
+            _logger.Info("[CustomersController::Create] HttpGet Done.");
             return View();
         }
 
@@ -38,7 +40,7 @@ namespace NTierMvcCustomerSystem.Controllers
             {
                 _logger.Info("[CustomersController::Create] Parameters not valid: {}.", customer);
 
-                return View();
+                return View(customer);
             }
 
             try
@@ -50,7 +52,7 @@ namespace NTierMvcCustomerSystem.Controllers
                 {
                     ViewBag.IsNotUnique = true;
                     _logger.Warn("[CustomersController::Create] User Name should be unique. Details: {} ", customer);
-                    return View();
+                    return View(customer);
                 }
 
                 _logger.Info("[CustomersController::Create] Creating Customer Successfully. Details: {} ", customer);
@@ -67,6 +69,7 @@ namespace NTierMvcCustomerSystem.Controllers
         public ActionResult Edit(int id, string userName)
         {
             var customer = new Customer { Id = id, UserName = userName };
+            _logger.Info("[CustomersController::Edit] HttpGet Done. Id: {}, UserName {}", id, userName);
             return View(customer);
 
         }
@@ -75,13 +78,13 @@ namespace NTierMvcCustomerSystem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Customer customer)
         {
-            _logger.Info("[CustomersController::Edit] Editing Customer with id :{}.", id);
+            _logger.Info("[CustomersController::Edit] Editing Customer with id :{}. Customer: {}", id, customer);
 
             if (!ModelState.IsValid)
             {
                 _logger.Info("[CustomersController::Edit] Parameters not valid: {}.", customer);
 
-                return View();
+                return View(customer);
             }
 
             try
@@ -90,7 +93,6 @@ namespace NTierMvcCustomerSystem.Controllers
 
                 if (!isUpdated)
                 {
-                    // todo: indicate the id is invalid
                     _logger.Warn("[CustomersController::Edit] Editing Customer with id :{} failed. Details: {} ", id, customer);
                     return View("ItemNotFound");
                 }
@@ -151,8 +153,7 @@ namespace NTierMvcCustomerSystem.Controllers
 
                 _logger.Info("[CustomersController::Delete] Deleting Customer with id :{} After Delete Confirmed Successfully. Details: {} ", id, customer);
 
-                // todo: indicate delete successfully
-                return RedirectToAction("ListAll");
+                return RedirectToAction("Index");
             }
             catch (Exception e)
             {
@@ -252,24 +253,6 @@ namespace NTierMvcCustomerSystem.Controllers
 
         }
 
-        public ActionResult NoteDetails(int id, string userName)
-        {
-            ViewBag.Id = id;
-
-            // try
-            return View();
-        }
-
-        public ActionResult AddNote()
-        {
-            // try
-            return View("NoteDetails");
-        }
-
-        public ActionResult AddChildNote()
-        {
-            // try
-            return View("NoteDetails");
-        }
+        
     }
 }

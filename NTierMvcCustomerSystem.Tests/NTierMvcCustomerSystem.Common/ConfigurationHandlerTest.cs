@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NTierMvcCustomerSystem.Common;
 using NTierMvcCustomerSystem.Tests.Common;
@@ -31,6 +33,13 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.Common
 
             Assert.AreEqual(expectedValue, value);
 
+        }
+
+        [TestMethod]
+        public void Test()
+        {
+            var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            Console.WriteLine(location);
         }
     }
 }

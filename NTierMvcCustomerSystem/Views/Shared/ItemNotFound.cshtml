@@ -6,8 +6,13 @@
 </head>
 <body>
     <hgroup>
-        <h1>ItemNotFound</h1> <br />
-        <h2>The Item you request is not found.</h2>
+        <h1>ItemNotFound</h1>
+        <br />
+        <h2>The Item you request is not found. </h2>
+        <h2>Please go to the home page instead.</h2>
     </hgroup>
+    <div>
+        @Html.ActionLink("Back to Home", "Index", "Customers")
+    </div>
 </body>
 </html>

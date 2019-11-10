@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -55,28 +57,43 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
 
                 var jObjectFromFile = JsonFileHelper.ReadJsonFile(_customersFilePath, _customersFileName);
 
-                var customerEntityJObject = jObjectFromFile["Customers"].FirstOrDefault(c => customerEntity.UserName.Equals((string)c["UserName"]));
+                var customerEntityJObject = jObjectFromFile["Customers"]
+                    .FirstOrDefault(c => customerEntity.UserName.Equals((string) c["UserName"]));
 
                 // Can't insert when there is a same userName
                 if (customerEntityJObject != null)
                 {
-                    _logger.Warn("[CustomersRepository::Insert] Can't insert when there is a same userName. CustomerEntity: {}", customerEntity);
+                    _logger.Warn(
+                        "[CustomersRepository::Insert] Can't insert when there is a same userName. CustomerEntity: {}",
+                        customerEntity);
                     return false;
                 }
 
                 var jObjectFromEntity = CustomerEntityToJToken(customerEntity);
-                jObjectFromFile.Merge(jObjectFromEntity, new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Union });
+                jObjectFromFile.Merge(jObjectFromEntity,
+                    new JsonMergeSettings {MergeArrayHandling = MergeArrayHandling.Union});
                 JsonFileHelper.WriteJsonFile(_customersFilePath, _customersFileName, jObjectFromFile);
 
                 if (_logger.IsDebugEnabled)
                 {
-                    _logger.Debug("[CustomersRepository::Insert] Insert customerEntity Successfully. InsertedEntity: {}", customerEntity);
+                    _logger.Debug(
+                        "[CustomersRepository::Insert] Insert customerEntity Successfully. InsertedEntity: {}",
+                        customerEntity);
                 }
+
                 return true;
+            }
+            catch (FileNotFoundException e)
+            {
+                CreateCustomersFile();
+                _logger.Error(e, "[CustomersRepository::Insert] Insert customerEntity failed. Can note find file. Entity: {}",
+                    customerEntity);
+                throw new DataAccessException("[CustomersRepository::Insert] Insert customerEntity failed.", e);
             }
             catch (Exception e)
             {
-                _logger.Error(e, "[CustomersRepository::Insert] Insert customerEntity failed. Entity: {}", customerEntity);
+                _logger.Error(e, "[CustomersRepository::Insert] Insert customerEntity failed. Can note find file. Entity: {}",
+                    customerEntity);
                 throw new DataAccessException("[CustomersRepository::Insert] Insert customerEntity failed.", e);
             }
         }
@@ -106,12 +123,15 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
                 var jObjectFromFile = JsonFileHelper.ReadJsonFile(_customersFilePath, _customersFileName);
 
                 var customerEntityJObject = jObjectFromFile["Customers"].FirstOrDefault(
-                                            c => string.Equals(customerEntity.UserName, (string)c["UserName"]) && customerEntity.Id == (int)c["Id"]);
+                    c => string.Equals(customerEntity.UserName, (string) c["UserName"]) &&
+                         customerEntity.Id == (int) c["Id"]);
 
                 // Can't update if id and userName are not matched
                 if (customerEntityJObject == null)
                 {
-                    _logger.Warn("[CustomersRepository::Update] Can't update if id and userName are not matched. CustomerEntity: {}", customerEntity);
+                    _logger.Warn(
+                        "[CustomersRepository::Update] Can't update if id and userName are not matched. CustomerEntity: {}",
+                        customerEntity);
                     return false;
                 }
 
@@ -120,14 +140,25 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
 
                 if (_logger.IsDebugEnabled)
                 {
-                    _logger.Debug("[CustomersRepository::Update] Update customerEntity Successfully. UpdatedEntity: {0}", customerEntity);
+                    _logger.Debug(
+                        "[CustomersRepository::Update] Update customerEntity Successfully. UpdatedEntity: {0}",
+                        customerEntity);
                 }
+
                 return true;
+            }
+            catch (FileNotFoundException e)
+            {
+                CreateCustomersFile();
+                _logger.Error(e, "[CustomersRepository::Update] Update customerEntity failed. Can note find file. Entity: {0}",
+                    customerEntity);
+                throw new DataAccessException("[CustomersRepository::Update] Update customerEntity failed. Can note find file.", e);
             }
             catch (Exception e)
             {
-                _logger.Error(e, "[CustomersRepository::Update] Update customerEntity failed. Entity: {0}", customerEntity);
-                throw new DataAccessException("[CustomersRepository::Update] Update customerEntity failed.", e);
+                _logger.Error(e, "[CustomersRepository::Update] Update customerEntity failed. Entity: {0}",
+                    customerEntity);
+                throw new DataAccessException("[CustomersRepository::Update] Update customerEntity failed. ", e);
             }
         }
 
@@ -141,13 +172,14 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
             try
             {
                 var jObject = JsonFileHelper.ReadJsonFile(_customersFilePath, _customersFileName);
-                var jArray = (JArray)jObject["Customers"];
-                var customerEntityJObject = jArray.FirstOrDefault(c => (int)c["Id"] == id);
+                var jArray = (JArray) jObject["Customers"];
+                var customerEntityJObject = jArray.FirstOrDefault(c => (int) c["Id"] == id);
 
                 // Can't delete when there is no such id
                 if (customerEntityJObject == null)
                 {
-                    _logger.Debug("[CustomersRepository::DeleteById] Can't delete when there is no such id. Id: {}", id);
+                    _logger.Debug("[CustomersRepository::DeleteById] Can't delete when there is no such id. Id: {}",
+                        id);
                     return false;
                 }
 
@@ -156,10 +188,18 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
 
                 if (_logger.IsDebugEnabled)
                 {
-                    _logger.Debug("[CustomersRepository::DeleteById] Delete customerEntity Successfully. DeletedEntity: {}", 
+                    _logger.Debug(
+                        "[CustomersRepository::DeleteById] Delete customerEntity Successfully. DeletedEntity: {}",
                         JTokenToCustomerEntity(customerEntityJObject));
                 }
+
                 return true;
+            }
+            catch (FileNotFoundException e)
+            {
+                CreateCustomersFile();
+                _logger.Error(e, "[CustomersRepository::DeleteById] Delete customerEntity failed. Can note find file. Id: {0}", id);
+                throw new DataAccessException("[CustomersRepository::DeleteById] Update customerEntity failed. Can note find file.", e);
             }
             catch (Exception e)
             {
@@ -179,19 +219,30 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
             {
                 var jObject = JsonFileHelper.ReadJsonFile(_customersFilePath, _customersFileName);
 
-                var customerEntityJObject = jObject["Customers"].FirstOrDefault(c => (int)c["Id"] == id);
+                var customerEntityJObject = jObject["Customers"].FirstOrDefault(c => (int) c["Id"] == id);
                 var customerEntity = JTokenToCustomerEntity(customerEntityJObject);
 
                 if (_logger.IsDebugEnabled)
                 {
-                    _logger.Debug("[CustomersRepository::SelectById] Select customerEntity by Id Successfully. Entity: {0}", customerEntity);
+                    _logger.Debug(
+                        "[CustomersRepository::SelectById] Select customerEntity by Id Successfully. Entity: {0}",
+                        customerEntity);
                 }
+
                 return customerEntity;
+            }
+            catch (FileNotFoundException e)
+            {
+                CreateCustomersFile();
+                _logger.Error(e, "[CustomersRepository::SelectById] Select customerEntity by Id failed. Can note find file. Id : {0}", id);
+                throw new DataAccessException("[CustomersRepository::SelectById] Select customerEntity by Id failed. Can note find file.",
+                    e);
             }
             catch (Exception e)
             {
                 _logger.Error(e, "[CustomersRepository::SelectById] Select customerEntity by Id failed. Id : {0}", id);
-                throw new DataAccessException("[CustomersRepository::SelectById] Select customerEntity by Id failed.", e);
+                throw new DataAccessException("[CustomersRepository::SelectById] Select customerEntity by Id failed.",
+                    e);
             }
         }
 
@@ -212,19 +263,35 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
 
                 var jObject = JsonFileHelper.ReadJsonFile(_customersFilePath, _customersFileName);
 
-                var customerEntityJObject = jObject["Customers"].FirstOrDefault(c => userName.Equals((string)c["UserName"]));
+                var customerEntityJObject =
+                    jObject["Customers"].FirstOrDefault(c => userName.Equals((string) c["UserName"]));
                 var customerEntity = JTokenToCustomerEntity(customerEntityJObject);
 
                 if (_logger.IsDebugEnabled)
                 {
-                    _logger.Debug("[CustomersRepository::SelectByUserName] Select customerEntity by userName Successfully. Entity: {0}", customerEntity);
+                    _logger.Debug(
+                        "[CustomersRepository::SelectByUserName] Select customerEntity by userName Successfully. Entity: {0}",
+                        customerEntity);
                 }
+
                 return customerEntity;
+            }
+            catch (FileNotFoundException e)
+            {
+                CreateCustomersFile();
+                _logger.Error(e,
+                    "[CustomersRepository::SelectByUserName] Select customerEntity by userName failed. Can note find file. UserName : {0}",
+                    userName);
+                throw new DataAccessException(
+                    "[CustomersRepository::SelectByUserName] Select customerEntity by userName failed. Can note find file.", e);
             }
             catch (Exception e)
             {
-                _logger.Error(e, "[CustomersRepository::SelectByUserName] Select customerEntity by userName failed. UserName : {0}", userName);
-                throw new DataAccessException("[CustomersRepository::SelectByUserName] Select customerEntity by userName failed.", e);
+                _logger.Error(e,
+                    "[CustomersRepository::SelectByUserName] Select customerEntity by userName failed. UserName : {0}",
+                    userName);
+                throw new DataAccessException(
+                    "[CustomersRepository::SelectByUserName] Select customerEntity by userName failed.", e);
             }
         }
 
@@ -237,20 +304,36 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
 
             try
             {
+                if(!File.Exists(Path.Combine(_customersFilePath, _customersFileName)))
+                {
+                    CreateCustomersFile();
+                }
+
                 var jObject = JsonFileHelper.ReadJsonFile(_customersFilePath, _customersFileName);
 
                 var customerEntities = jObject["Customers"].Select(JTokenToCustomerEntity).ToList();
 
                 if (_logger.IsDebugEnabled)
                 {
-                    _logger.Debug("[CustomersRepository::SelectAll] Select all customerEntity Successfully. Entities: {0}", customerEntities);
+                    _logger.Debug(
+                        "[CustomersRepository::SelectAll] Select all customerEntity Successfully. Entities: {0}",
+                        customerEntities);
                 }
+
                 return customerEntities;
+            }
+            catch (FileNotFoundException e)
+            {
+                CreateCustomersFile();
+                _logger.Error(e, "[CustomersRepository::SelectAll] Select all customerEntity from file failed. Can note find file.");
+                throw new DataAccessException(
+                    "[CustomersRepository::SelectAll] Select all customerEntity from file failed. Can note find file.", e);
             }
             catch (Exception e)
             {
                 _logger.Error(e, "[CustomersRepository::SelectAll] Select all customerEntity from file failed.");
-                throw new DataAccessException("[CustomersRepository::SelectAll] Select all customerEntity from file failed.", e);
+                throw new DataAccessException(
+                    "[CustomersRepository::SelectAll] Select all customerEntity from file failed.", e);
             }
         }
 
@@ -266,19 +349,34 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
                 var jObject = JsonFileHelper.ReadJsonFile(_customersFilePath, _customersFileName);
 
                 var customerEntities = jObject["Customers"]
-                                        .Where(c => ((string)c["FirstName"]).Contains(name) || ((string)c["LastName"]).Contains(name))
-                                        .Select(JTokenToCustomerEntity).ToList();
+                    .Where(c => ((string) c["FirstName"]).Contains(name) || ((string) c["LastName"]).Contains(name))
+                    .Select(JTokenToCustomerEntity).ToList();
 
                 if (_logger.IsDebugEnabled)
                 {
-                    _logger.Debug("[CustomersRepository::SelectByFirstOrLastName] Select customerEntity by Name Successfully. Entities: {0}", customerEntities);
+                    _logger.Debug(
+                        "[CustomersRepository::SelectByFirstOrLastName] Select customerEntity by Name Successfully. Entities: {0}",
+                        customerEntities);
                 }
+
                 return customerEntities;
+            }
+            catch (FileNotFoundException e)
+            {
+                CreateCustomersFile();
+                _logger.Error(e,
+                    "[CustomersRepository::SelectByFirstOrLastName] Select customerEntity by Name failed. Can note find file. Name : {0}",
+                    name);
+                throw new DataAccessException(
+                    "[CustomersRepository::SelectByFirstOrLastName] Select customerEntity by Name failed. Can note find file.", e);
             }
             catch (Exception e)
             {
-                _logger.Error(e, "[CustomersRepository::SelectByFirstOrLastName] Select customerEntity by Name failed. Name : {0}", name);
-                throw new DataAccessException("[CustomersRepository::SelectByFirstOrLastName] Select customerEntity by Name failed.", e);
+                _logger.Error(e,
+                    "[CustomersRepository::SelectByFirstOrLastName] Select customerEntity by Name failed. Name : {0}",
+                    name);
+                throw new DataAccessException(
+                    "[CustomersRepository::SelectByFirstOrLastName] Select customerEntity by Name failed.", e);
             }
         }
 
@@ -341,6 +439,17 @@ namespace NTierMvcCustomerSystem.DataAccess.Implementation
             jObject["PhoneNumber"] = customerEntity.PhoneNumber;
             jObject["DateOfBirth"] = customerEntity.DateOfBirth;
             jObject["CallNoteName"] = customerEntity.CallNoteName;
+        }
+
+        private void CreateCustomersFile()
+        {
+            if (string.IsNullOrWhiteSpace(_customersFilePath) || string.IsNullOrWhiteSpace(_customersFileName))
+            {
+                return;
+            }
+
+            var jObject = CustomerEntityToJToken(null);
+            JsonFileHelper.WriteJsonFile(_customersFilePath, _customersFileName, jObject);
         }
     }
 }

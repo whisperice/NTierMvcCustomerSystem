@@ -90,6 +90,9 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Services
                     return false;
                 }
 
+                // After creating customer successfully, create Call Note file for the user
+                _callNotesService.CreateCallNotesFile(customer.UserName);
+
                 if (_logger.IsDebugEnabled)
                 {
                     _logger.Debug("[CustomersService::Insert] Insert customer Successfully. Inserted Customer: {}", customer);
@@ -187,8 +190,9 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Services
                         "[CustomersService::DeleteById] Id is not valid.", nameof(id));
                 }
 
-                // Get Customer Details before deleted
+                // Delete Call Notes file before user deleted
                 var customer = ToCustomer(_customersRepository.SelectById(id));
+                _callNotesService.DeleteCallNotes(customer.UserName);
                 
                 var isDeleted = _customersRepository.DeleteById(id);
 
@@ -199,7 +203,6 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Services
                     return false;
                 }
 
-                _callNotesService.DeleteCallNotes(customer.UserName);
 
                 if (_logger.IsDebugEnabled)
                 {
@@ -210,7 +213,7 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.Error(e, "[CustomersService::DeleteById] Delete customer failed. Id: {}", id);
-                throw new BusinessLogicException("[CustomersService::DeleteById] Update customer failed.", e);
+                throw new BusinessLogicException("[CustomersService::DeleteById] Delete customer failed.", e);
             }
         }
 
