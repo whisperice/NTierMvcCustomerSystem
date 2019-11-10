@@ -48,10 +48,5 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomersSystem.BusinessLogic
             Assert.AreEqual(customer1, customers[1]);
         }
 
-        [TestMethod]
-        public void test()
-        {
-            Assert.AreEqual("", string.Empty);
-        }
     }
 }

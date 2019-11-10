@@ -68,10 +68,26 @@ namespace NTierMvcCustomerSystem.Controllers
         [HttpGet]
         public ActionResult Edit(int id, string userName)
         {
-            var customer = new Customer { Id = id, UserName = userName };
-            _logger.Info("[CustomersController::Edit] HttpGet Done. Id: {}, UserName {}", id, userName);
-            return View(customer);
+            _logger.Info("[CustomersController::Edit] HttpGet. Customers with Id: {}.", id);
 
+            try
+            {
+                var customer = _customersService.SelectById(id);
+
+                if (customer == null)
+                {
+                    _logger.Info("[CustomersController::Edit] Can not find Details of Customers with Id: {} before Edit.", id);
+                    return View("ItemNotFound");
+                }
+
+                _logger.Info("[CustomersController::Edit] HttpGet Done. Details of Customers found before Edit. Details: {} ", customer);
+                return View(customer);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "[CustomersController::Edit] Finding Details of Customer with Id: {} Error.", id);
+                return View("Error");
+            }
         }
 
         [HttpPost]
