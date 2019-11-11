@@ -1,7 +1,7 @@
 # N-Tier Mvc Customer Management System
-It follows Model-View-Controller(MVC) Pattern and the N-Tiers Deployment Architecture Pattern. 
-It uses a json file as data source to store the details of all customers. 
-Newtonsoft.Json is used for processing json files.
+It follows Model-View-Controller(MVC) Pattern and the N-Tiers Deployment Architecture Pattern.  
+It uses a json file as data source to store the details of all customers.  
+Newtonsoft.Json is used for processing json files.  
 Nlog is used for logging. 
 
 ## Note to Run
