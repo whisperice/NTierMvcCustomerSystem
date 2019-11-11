@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using NTierMvcCustomerSystem.BusinessLogic.Common;
 using NTierMvcCustomerSystem.BusinessLogic.Interface;
@@ -13,22 +14,18 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Services
 {
     public class CustomersService : IModelService<Customer>
     {
-        private readonly string _customersFilePath;
-
         private readonly CallNotesService _callNotesService;
         private readonly CustomersRepository _customersRepository;
         private readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public CustomersService()
         {
-            _customersFilePath = ConfigurationHandler.GetDataSourcePath();
             _callNotesService = new CallNotesService();
             _customersRepository = new CustomersRepository();
         }
 
         public CustomersService(string customersFilePath, string customersFileName)
         {
-            _customersFilePath = customersFilePath;
             _callNotesService = new CallNotesService(customersFilePath, customersFileName);
             _customersRepository = new CustomersRepository(customersFilePath, customersFileName);
         }
@@ -79,6 +76,7 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Services
                 }
 
                 // Generate a unique Id for the new customer
+                int tempId = customer.Id;
                 customer.Id = IdSeqGenerator.GetIdSeq();
                 var isInserted = _customersRepository.Insert(ToCustomerEntity(customer));
 
@@ -87,6 +85,7 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Services
                 {
                     _logger.Warn("[CustomersService::Insert] Can't insert when there is a same userName.");
                     id = Constants.NotExistCustomerId;
+                    customer.Id = tempId;
                     return false;
                 }
 
@@ -192,7 +191,10 @@ namespace NTierMvcCustomerSystem.BusinessLogic.Services
 
                 // Delete Call Notes file before user deleted
                 var customer = ToCustomer(_customersRepository.SelectById(id));
-                _callNotesService.DeleteCallNotes(customer.UserName);
+                if (customer != null)
+                {
+                    _callNotesService.DeleteCallNotes(customer.UserName);
+                }
                 
                 var isDeleted = _customersRepository.DeleteById(id);
 

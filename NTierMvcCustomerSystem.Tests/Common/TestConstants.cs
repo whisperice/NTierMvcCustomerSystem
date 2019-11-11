@@ -4,7 +4,7 @@ namespace NTierMvcCustomerSystem.Tests.Common
 {
     class TestConstants
     {
-        public const string DataSourcePath = @"E:\文档\tuts\C#\NTierMvcCustomerSystem";
+        public const string DataSourcePath = @"D:\TempFolderForExecuting";
 
         public const string DataSourcePathSegment = "DataSourceTest";
 

@@ -75,6 +75,62 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
 
             // read the json file after write, in order to do comparison
             var fullFileName = Path.Combine(_filePath, _fileName);
+            var jObject = ReadJObjectFromFile(fullFileName);
+            var callNotes = jObject["CallNotes"].Select(JTokenToCallNote).ToList();
+
+            Assert.IsTrue(Utilities.EqualsAll(_callNotes, callNotes));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(DataAccessException))]
+        public void WriteCallNotes_NullCallNotes_WriteCorrectly()
+        {
+            CallNoteFileHelper.WriteCallNotes(_filePath, _fileName, null);
+        }
+
+
+        [TestMethod]
+        public void ReadCallNotes_NotNullPathAndName_ReadCorrect()
+        {
+            // write the json file before do the reading
+            WriteJsonToFile();
+
+            var readCallNotes = CallNoteFileHelper.ReadCallNotes(_filePath, _fileName);
+            Assert.IsTrue(Utilities.EqualsAll(_callNotes, readCallNotes));
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(FileNotFoundException))]
+        public void ReadCallNotes_CallNoteFileNotFound_ThrowFileNoteFoundException()
+        {
+            CallNoteFileHelper.ReadCallNotes(_filePath, _fileName);
+        }
+
+        [TestMethod]
+        public void DeleteCallNotes_NotNullPathAndName_FileDeleted()
+        {
+            CallNoteFileHelper.DeleteCallNotes(_filePath, _fileName);
+            Assert.IsFalse(File.Exists(Path.Combine(_filePath, _fileName)));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(DataAccessException))]
+        public void DeleteCallNotes_NullPath_ThrowDataAccessException()
+        {
+            CallNoteFileHelper.DeleteCallNotes(null, _fileName);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(DataAccessException))]
+        public void DeleteCallNotes_NullName_ThrowDataAccessException()
+        {
+            CallNoteFileHelper.DeleteCallNotes(_filePath, null);
+        }
+
+
+
+        private static JObject ReadJObjectFromFile(string fullFileName)
+        {
             JObject jObject;
             using (StreamReader file = File.OpenText(fullFileName))
             {
@@ -83,15 +139,13 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
                     jObject = (JObject)JToken.ReadFrom(reader);
                 }
             }
-            var callNotes = jObject["CallNotes"].Select(JTokenToCallNote).ToList();
 
-            Assert.IsTrue(Utilities.EqualsAll(_callNotes, callNotes));
+            return jObject;
         }
 
-        [TestMethod]
-        public void ReadCallNotes_NotNullPathAndName_ReadCorrect()
+
+        private void WriteJsonToFile()
         {
-            // write the json file before do the reading
             var jArray = new JArray();
             var jObject = new JObject { ["CallNotes"] = jArray };
 
@@ -109,20 +163,7 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
                     jObject.WriteTo(writer);
                 }
             }
-
-
-
-            var readCallNotes = CallNoteFileHelper.ReadCallNotes(_filePath, _fileName);
-            Assert.IsTrue(Utilities.EqualsAll(_callNotes, readCallNotes));
         }
-
-        [TestMethod]
-        public void DeleteCallNotes_NotNullPathAndName_FileDeleted()
-        {
-            CallNoteFileHelper.DeleteCallNotes(_filePath, _fileName);
-            Assert.IsFalse(File.Exists(Path.Combine(_filePath, _fileName)));
-        }
-
 
         private static CallNote JTokenToCallNote(JToken callNoteJObject)
         {
