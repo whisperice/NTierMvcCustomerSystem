@@ -1,7 +1,10 @@
-# N-Tier Mvc Customer System
-A Customer Management System. It follows Model-View-Controller(MVC) Pattern and the N-Tiers Deployment Architecture Pattern.
+# N-Tier Mvc Customer Management System
+It follows Model-View-Controller(MVC) Pattern and the N-Tiers Deployment Architecture Pattern. 
+It uses a json file as data source to store the details of all customers. 
+Newtonsoft.Json is used for processing json files.
+Nlog is used for logging. 
 
-## Note To Run:
+## Note to Run
 1. Please Open with Visual Studio 2017 or later, using <b>Open Soultion</b> and choose "NTierMvcCustomerSystem.sln".
 2. Right click the solution, choose <b>Build Solution</b>.
 3. Click the whole solution, <b>Run with IIS</b> (Ctrl + F5).
@@ -12,6 +15,20 @@ According to the StackOverFlow, the issue might be caused by the old version of 
 * If some dependencies can not be recognised, please <b>Clean/Build Solution</b>, <b>Close Solution</b> and <b>Open Solution</b> agian.
 Since the whole dependencies are up to 114Mb, so it may take time before they are downloaded.
 * Please note the .Net Framework version is 4.6.1
+
+## Note for the Test Cases and Data Source File
+1. Please make sure the program have read/write right to D:\, otherwise the test project can not generate the files used for test, and the test cases will be failed.
+2. If you would like to change the generated test files to specific path, please modify the DataSourcePath value in NTierMvcCustomerSystem\NTierMvcCustomerSystem.Tests\Common\TestConstants.cs
+3. Normally, the data source json file for the details of all customers will be located in the executing path. The path is like "C:\Users\dyt\AppData\Local\Temp\Temporary ASP.NET Files\vs\.....". Since call notes are content, they are not stored together with the data source file. Call notes for different customers are saved in separated files.
+4. But if the program doesn't have the right of read/write to that path, please change the below two values to a path, where the program has read/write right, to make the program work.  
+<add key="DataSourcePath" value="D:\TempFolderForExecuting" /> in NTierMvcCustomerSystem\NTierMvcCustomerSystem\Web.config
+<add key="DataSourcePath" value="D:\TempFolderForExecuting" /> in NTierMvcCustomerSystem\NTierMvcCustomerSystem.Tests\App.config
+
+## Note for Log
+1. Log files are located under NTierMvcCustomerSystem\NTierMvcCustomerSystem\logs
+2. Now the log level is DEBUG. I know in production environment, normally the log level should not be DEBUG, but I just leave it for you to see more logs in log file.
+3. If you would like to change it to INFO level, please change the enabled value to false in the following place.
+<logger name="*" minlevel="Debug" writeTo="logfile" enabled="true" final="true" /> in NTierMvcCustomerSystem\NTierMvcCustomerSystem\Nlog.config
 
 ## Solution Structure
 The whole solution contains 6 projects.  
