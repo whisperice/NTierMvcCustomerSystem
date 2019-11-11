@@ -19,7 +19,7 @@ Since the whole dependencies are up to 114Mb, so it may take time before they ar
 ## Note for the Test Cases and Data Source File
 1. Please make sure the program have read/write right to D:\, otherwise the test project can not generate the files used for test, and the test cases will be failed.
 2. If you would like to change the generated test files to specific path, please modify the DataSourcePath value in NTierMvcCustomerSystem\NTierMvcCustomerSystem.Tests\Common\TestConstants.cs
-3. Normally, the data source json file for the details of all customers will be located in the executing path. The path is like "C:\Users\{UserName}\AppData\Local\Temp\Temporary ASP.NET Files\vs\.....". Since call notes are content, they are not stored together with the data source file. Call notes for different customers are saved in separated files.
+3. Normally, the data source json file for the details of all customers will be located in the executing path. The path is like "C:\Users\\{UserName}\AppData\Local\Temp\Temporary ASP.NET Files\vs\.....". Since call notes are content, they are not stored together with the data source file. Call notes for different customers are saved in separated files.
 4. But if the program doesn't have the right of read/write to that path, please change the below two values to a path, where the program has read/write right, to make the program work.  
 <add key="DataSourcePath" value="D:\TempFolderForExecuting" /> in NTierMvcCustomerSystem\NTierMvcCustomerSystem\Web.config
 <add key="DataSourcePath" value="D:\TempFolderForExecuting" /> in NTierMvcCustomerSystem\NTierMvcCustomerSystem.Tests\App.config
