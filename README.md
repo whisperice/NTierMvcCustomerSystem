@@ -4,7 +4,7 @@ It uses a JSON file as the data source to store the details of all customers.
 Newtonsoft.Json is used for processing JSON files.  
 NLog is used for logging. 
 
-## Note to Run
+## Note for Running
 1. Please Open with Visual Studio 2017 or later, using <b>Open Soultion</b> and choose "NTierMvcCustomerSystem.sln".
 2. Right click the solution, choose <b>Build Solution</b>.
 3. Click the whole solution, <b>Run with IIS</b> (Ctrl + F5).
