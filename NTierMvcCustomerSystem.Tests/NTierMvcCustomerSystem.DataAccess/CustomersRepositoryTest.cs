@@ -94,6 +94,21 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
         }
 
         [TestMethod]
+        public void Insert_EntityHasNotExistingUserName_ReturnTrue()
+        {
+            Assert.IsTrue(_customersRepository.Insert(new CustomerEntity
+            {
+                Id = 1000,
+                UserName = "iceberg",
+                FirstName = "AAA",
+                LastName = "BBB",
+                PhoneNumber = "0411222333",
+                DateOfBirth = "02/12/1999",
+                CallNoteName = "iceberg.json"
+            }));
+        }
+        
+        [TestMethod]
         [ExpectedException(typeof(DataAccessException))]
         public void Insert_CustomerFileNotFound_ThrowDataAccessException()
         {
@@ -110,21 +125,6 @@ namespace NTierMvcCustomerSystem.Tests.NTierMvcCustomerSystem.DataAccess
                 DateOfBirth = "02/12/1999",
                 CallNoteName = "whisper.json"
             });
-        }
-
-        [TestMethod]
-        public void Insert_EntityHasNotExistingUserName_ReturnTrue()
-        {
-            Assert.IsTrue(_customersRepository.Insert(new CustomerEntity
-            {
-                Id = 1000,
-                UserName = "iceberg",
-                FirstName = "AAA",
-                LastName = "BBB",
-                PhoneNumber = "0411222333",
-                DateOfBirth = "02/12/1999",
-                CallNoteName = "iceberg.json"
-            }));
         }
 
         [TestMethod]
